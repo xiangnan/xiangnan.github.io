@@ -1,0 +1,720 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android, Yolo, xiangnan" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="Android 3.0 引入的基于Fragment的DialogFragment，DialogFragment让dialog也变成了碎片，用于在Activity的内容之上展示一个模态的对话框。官方推荐使用 DialogFragment 来代替 Dialog ，可以具有更高的可复用性（降低耦合），当旋转屏幕和按下后退键时可以更好的管理其声明周期，和Fragment有着基本一致的声明周期，同时也具有和">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用DialogFragment代替传统Dialog">
+<meta property="og:url" content="https://xiangnan.github.io/2017/03/24/使用DialogFragment代替传统Dialog/index.html">
+<meta property="og:site_name" content="Yolo">
+<meta property="og:description" content="Android 3.0 引入的基于Fragment的DialogFragment，DialogFragment让dialog也变成了碎片，用于在Activity的内容之上展示一个模态的对话框。官方推荐使用 DialogFragment 来代替 Dialog ，可以具有更高的可复用性（降低耦合），当旋转屏幕和按下后退键时可以更好的管理其声明周期，和Fragment有着基本一致的声明周期，同时也具有和">
+<meta property="og:updated_time" content="2017-06-05T02:06:38.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用DialogFragment代替传统Dialog">
+<meta name="twitter:description" content="Android 3.0 引入的基于Fragment的DialogFragment，DialogFragment让dialog也变成了碎片，用于在Activity的内容之上展示一个模态的对话框。官方推荐使用 DialogFragment 来代替 Dialog ，可以具有更高的可复用性（降低耦合），当旋转屏幕和按下后退键时可以更好的管理其声明周期，和Fragment有着基本一致的声明周期，同时也具有和">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: 'Author'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="https://xiangnan.github.io/2017/03/24/使用DialogFragment代替传统Dialog/"/>
+
+  <title> 使用DialogFragment代替传统Dialog | Yolo </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-84862254-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?9ee03fcc737833d8cfeb282e7670f86b";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Yolo</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">You only live once.</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                使用DialogFragment代替传统Dialog
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Posted on</span>
+            <time itemprop="dateCreated" datetime="2017-03-24T16:40:23+08:00" content="2017-03-24">
+              2017-03-24
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/03/24/使用DialogFragment代替传统Dialog/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/03/24/使用DialogFragment代替传统Dialog/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv"><i class="fa fa-file-o"></i>
+              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Android 3.0 引入的基于Fragment的DialogFragment，DialogFragment让dialog也变成了碎片，用于在Activity的内容之上展示一个模态的对话框。<br>官方推荐使用 DialogFragment 来代替 Dialog ，可以具有更高的可复用性（降低耦合），当旋转屏幕和按下后退键时可以更好的管理其声明周期，和Fragment有着基本一致的声明周期，同时也具有和Fragment一样的优点。</p>
+<a id="more"></a>
+<h2 id="为什么要使用DialogFragment"><a href="#为什么要使用DialogFragment" class="headerlink" title="为什么要使用DialogFragment"></a>为什么要使用DialogFragment</h2><p>1、当横竖屏切换时，DialogFragment会自动重建，而AlertDialog没有这样的能力。</p>
+<p>如当屏幕方向发生变化，会导致Activity重建，之前显示的AlertDialog对话框就会消失。若要使对话框重建，需手动处理。<br>在onSaveInstanceState中<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onSaveInstanceState</span><span class="params">(Bundle outState)</span> </span>&#123;</div><div class="line">    <span class="keyword">super</span>.onSaveInstanceState(outState);</div><div class="line">    <span class="keyword">if</span> (dialog != <span class="keyword">null</span> &amp;&amp; dialog.isShowing()) &#123;</div><div class="line">        outState.putBoolean(<span class="string">"DIALOG_SHOWN"</span>, <span class="keyword">true</span>);</div><div class="line">    &#125;<span class="keyword">else</span>&#123;</div><div class="line">        outState.putBoolean(<span class="string">"DIALOG_SHOWN"</span>, <span class="keyword">false</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>在onCreate中<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</div><div class="line">    <span class="keyword">super</span>.onCreate(savedInstanceState);</div><div class="line">    setContentView(R.layout.activity_main);</div><div class="line">    </div><div class="line">    <span class="keyword">if</span> (savedInstanceState != <span class="keyword">null</span>) &#123;</div><div class="line">        <span class="keyword">boolean</span> isShown = savedInstanceState.getBoolean(<span class="string">"DIALOG_SHOWN"</span>);</div><div class="line">        <span class="keyword">if</span> (isShown) &#123;</div><div class="line">            AlertDialog dialog = <span class="keyword">new</span> AlertDialog.Builder(<span class="keyword">this</span>).setTitle(<span class="string">"Dialog"</span>)</div><div class="line">                    .setMessage(<span class="string">"this is a dialog"</span>).show();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>onDestroy()中<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 在Activity销毁之前，确保对话框以关闭，否则会有Android leaked window异常信息</div><div class="line"> */</div><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onDestroy</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">super</span>.onDestroy();</div><div class="line">    <span class="keyword">if</span>(dialog != <span class="keyword">null</span> &amp;&amp; dialog.isShowing())</div><div class="line">        dialog.dismiss();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>若使用DialogFragment来管理对话框，当旋转屏幕的时候，DialogFragment的对话框将会由FragmentManager自动重建</p>
+<p>2、DialogFragment更灵活、松耦合性<br>DialogFragment可以很灵活的当做普通Fragment使用，在onCreateView中很方便的自定义布局</p>
+<h2 id="创建DialogFragment两种方式"><a href="#创建DialogFragment两种方式" class="headerlink" title="创建DialogFragment两种方式"></a>创建DialogFragment两种方式</h2><p>1、重写 onCreateDialog<br>一般用于创建替代传统的 Dialog 对话框的场景。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> Dialog <span class="title">onCreateDialog</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</div><div class="line">    AlertDialog.Builder builder = <span class="keyword">new</span> AlertDialog.Builder(getActivity());</div><div class="line">	<span class="comment">// AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.CustomDialog);</span></div><div class="line">    builder.setTitle(<span class="string">"title"</span>)</div><div class="line">           .setMessage(<span class="string">"this is a dialog"</span>)</div><div class="line">           .setPositiveButton(<span class="string">"ok"</span>, <span class="keyword">null</span>)</div><div class="line">           .setNegativeButton(<span class="string">"cancel"</span>, <span class="keyword">null</span>)</div><div class="line">           .setCancelable(<span class="keyword">false</span>);</div><div class="line">    <span class="keyword">return</span> builder.create();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>or<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> Dialog <span class="title">onCreateDialog</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</div><div class="line">	AlertDialog.Builder builder = <span class="keyword">new</span> AlertDialog.Builder(getActivity());</div><div class="line">	<span class="comment">// AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.CustomDialog);</span></div><div class="line">	LayoutInflater inflater = getActivity().getLayoutInflater();  </div><div class="line">    View view = inflater.inflate(R.layout.fragment_dialog, <span class="keyword">null</span>);  </div><div class="line">    builder.setView(view) </div><div class="line"> 	<span class="comment">// Do Someting</span></div><div class="line">    <span class="keyword">return</span> builder.create();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>or<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> Dialog <span class="title">onCreateDialog</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</div><div class="line">	LayoutInflater inflater = getActivity().getLayoutInflater();</div><div class="line">    View view = inflater.inflate(R.layout.fragment_dialog, <span class="keyword">null</span>);</div><div class="line">	Dialog dialog = <span class="keyword">new</span> Dialog(getActivity());</div><div class="line">  	<span class="comment">// Dialog dialog = new Dialog(getActivity(), R.style.CustomDialog);</span></div><div class="line">    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);</div><div class="line">    dialog.setContentView(view);</div><div class="line">    dialog.setCanceledOnTouchOutside(<span class="keyword">true</span>);</div><div class="line">    <span class="comment">//Do something</span></div><div class="line">    Window window = dialog.getWindow();</div><div class="line">    window.setBackgroundDrawableResource(R.color.transparent);</div><div class="line">    WindowManager.LayoutParams wlp = window.getAttributes();</div><div class="line">    wlp.gravity = Gravity.BOTTOM;</div><div class="line">    wlp.width = WindowManager.LayoutParams.MATCH_PARENT;</div><div class="line">    wlp.height = WindowManager.LayoutParams.WRAP_CONTENT;</div><div class="line">    window.setAttributes(wlp);</div><div class="line">    <span class="keyword">return</span> dialog;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>2、重写 onCreateView<br>一般用于创建自定义及复杂内容弹窗的场景。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomDialogFragment</span> <span class="keyword">extends</span> <span class="title">DialogFragment</span> </span>&#123;	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> CustomDialogFragment <span class="title">newInstance</span><span class="params">(String title)</span> </span>&#123;</div><div class="line">		CustomDialogFragment frag = <span class="keyword">new</span> CustomDialogFragment();</div><div class="line">		Bundle args = <span class="keyword">new</span> Bundle();</div><div class="line">		args.putString(<span class="string">"title"</span>, title);</div><div class="line">		frag.setArguments(args);</div><div class="line">		<span class="keyword">return</span> frag;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(@Nullable Bundle savedInstanceState)</span> </span>&#123;</div><div class="line">    	<span class="keyword">super</span>.onCreate(savedInstanceState);</div><div class="line">    	setStyle(DialogFragment.STYLE_NO_TITLE, R.style.CustomDialog);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> View <span class="title">onCreateView</span><span class="params">(LayoutInflater inflater, ViewGroup container,</span></span></div><div class="line">			Bundle savedInstanceState) &#123;</div><div class="line">		View rootView = inflater.inflate(R.layout.fragment_custom_dialog, container, <span class="keyword">false</span>);</div><div class="line">        <span class="comment">// Do Someting</span></div><div class="line">        <span class="keyword">return</span> rootView;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="DialogFragment的管理"><a href="#DialogFragment的管理" class="headerlink" title="DialogFragment的管理"></a>DialogFragment的管理</h2><h3 id="1、DialogFactory"><a href="#1、DialogFactory" class="headerlink" title="1、DialogFactory"></a>1、DialogFactory</h3><p>可建立一个工厂类对项目中大量的Dialog进行管理<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DialogFactory</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String DIALOG_PROGRESS_TAG = <span class="string">"progress"</span>;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String DIALOG_ACTION_SHEET_TAG = <span class="string">"action_sheet"</span>;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String DIALOG_CONFIRM_TAG = <span class="string">"confirm"</span>;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> FragmentManager mFragmentManager;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">DialogFactory</span><span class="params">(FragmentManager fragmentManager)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.mFragmentManager = fragmentManager;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">showProgressDialog</span><span class="params">(String message, <span class="keyword">boolean</span> isCancelable)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (mFragmentManager != <span class="keyword">null</span>) &#123;</div><div class="line">            removeDialogWithTag(DIALOG_PROGRESS_TAG);</div><div class="line"></div><div class="line">            ProgressDialogFragment progressDialogFragment = ProgressDialogFragment.newInstance(message, isCancelable);</div><div class="line">            progressDialogFragment.show(mFragmentManager, DIALOG_PROGRESS_TAG);</div><div class="line"></div><div class="line">            mFragmentManager.executePendingTransactions();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">dismissProgressDialog</span><span class="params">()</span> </span>&#123;</div><div class="line">        Fragment fragment = mFragmentManager.findFragmentByTag(DIALOG_PROGRESS_TAG);</div><div class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> != fragment) &#123;</div><div class="line">            ((ProgressDialogFragment) fragment).dismiss();</div><div class="line">            mFragmentManager.beginTransaction().remove(fragment).commit();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">removeDialogWithTag</span><span class="params">(String dialogTag)</span></span>&#123;</div><div class="line">        Fragment fragment = mFragmentManager.findFragmentByTag(dialogTag);</div><div class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> != fragment) &#123;</div><div class="line">            mFragmentManager.beginTransaction().remove(fragment).commit();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="2、链式编程"><a href="#2、链式编程" class="headerlink" title="2、链式编程"></a>2、链式编程</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConfirmDialogFragment</span> <span class="keyword">extends</span> <span class="title">BaseDialogFragment</span> </span>&#123;</div><div class="line">    <span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IDialogClickListener</span> </span>&#123;</div><div class="line">        <span class="function"><span class="keyword">void</span> <span class="title">onClick</span><span class="params">(ConfirmDialogFragment dialog)</span></span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> IDialogClickListener mPositiveClickListener;</div><div class="line">    <span class="keyword">private</span> IDialogClickListener mNegativeClickListener;</div><div class="line"></div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Builder</span> </span>&#123;</div><div class="line">        <span class="keyword">private</span> Bundle bundle;</div><div class="line">        <span class="keyword">private</span> Activity context;</div><div class="line">        <span class="keyword">private</span> IDialogClickListener okClickListener;</div><div class="line">        <span class="keyword">private</span> IDialogClickListener cancelClickListener;</div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="title">Builder</span><span class="params">(Activity context)</span> </span>&#123;</div><div class="line">            bundle = <span class="keyword">new</span> Bundle();</div><div class="line">            <span class="keyword">this</span>.context = context;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="function"><span class="keyword">public</span> Builder <span class="title">setTitle</span><span class="params">(String title)</span> </span>&#123;</div><div class="line">            putTitle(bundle, title);</div><div class="line">            <span class="keyword">return</span> <span class="keyword">this</span>;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="function"><span class="keyword">public</span> Builder <span class="title">setTitle</span><span class="params">(<span class="keyword">int</span> titleId)</span> </span>&#123;</div><div class="line">            <span class="keyword">return</span> setTitle(context.getString(titleId));</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="function"><span class="keyword">public</span> Builder <span class="title">setMessage</span><span class="params">(String msg)</span> </span>&#123;</div><div class="line">            putMessage(bundle, msg);</div><div class="line">            <span class="keyword">return</span> <span class="keyword">this</span>;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="function"><span class="keyword">public</span> Builder <span class="title">setMessage</span><span class="params">(<span class="keyword">int</span> msgId)</span> </span>&#123;</div><div class="line">            <span class="keyword">return</span> setMessage(context.getString(msgId));</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="function"><span class="keyword">public</span> Builder <span class="title">setPositiveButton</span><span class="params">(<span class="keyword">int</span> textId, IDialogClickListener l)</span> </span>&#123;</div><div class="line">            bundle.putString(<span class="string">"ok"</span>, context.getString(textId));</div><div class="line">            okClickListener = l;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">this</span>;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="function"><span class="keyword">public</span> Builder <span class="title">setNegativeButton</span><span class="params">(<span class="keyword">int</span> textId, IDialogClickListener l)</span> </span>&#123;</div><div class="line">            bundle.putString(<span class="string">"cancel"</span>, context.getString(textId));</div><div class="line">            cancelClickListener = l;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">this</span>;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="function"><span class="keyword">public</span> Builder <span class="title">setCancelable</span><span class="params">(<span class="keyword">boolean</span> cancelable)</span> </span>&#123;</div><div class="line">            putCancelable(bundle, cancelable);</div><div class="line">            <span class="keyword">return</span> <span class="keyword">this</span>;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="function"><span class="keyword">public</span> Builder <span class="title">setCancelableOutside</span><span class="params">(<span class="keyword">boolean</span> cancelable)</span> </span>&#123;</div><div class="line">            putCancelableOutside(bundle, cancelable);</div><div class="line">            <span class="keyword">return</span> <span class="keyword">this</span>;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="function"><span class="keyword">public</span> ConfirmDialogFragment <span class="title">show</span><span class="params">()</span> </span>&#123;</div><div class="line">            ConfirmDialogFragment dialog = <span class="keyword">new</span> ConfirmDialogFragment();</div><div class="line">            dialog.setArguments(bundle);</div><div class="line">            dialog.mPositiveClickListener = okClickListener;</div><div class="line">            dialog.mNegativeClickListener = cancelClickListener;</div><div class="line">            dialog.show(context.getFragmentManager(), <span class="string">""</span>);</div><div class="line">            <span class="keyword">return</span> dialog;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Nullable</span></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> View <span class="title">onCreateView</span><span class="params">(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)</span> </span>&#123;</div><div class="line">        getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);</div><div class="line">        View view = inflater.inflate(R.layout.fragment_dialog_confirm, container, <span class="keyword">false</span>);</div><div class="line">        <span class="comment">//...</span></div><div class="line">        <span class="keyword">return</span> view;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>使用时<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">new</span> ConfirmDialogFragment.Builder(MainActivity.<span class="keyword">this</span>)</div><div class="line">                .setTitle(R.string.dialog_title)</div><div class="line">                .setMessage(R.string.dialog_message)</div><div class="line">                .setPositiveButton(R.string.sure, <span class="keyword">new</span> ConfirmDialogFragment.IDialogClickListener() &#123;</div><div class="line">                    <span class="meta">@Override</span></div><div class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(ConfirmDialogFragment dialog)</span> </span>&#123;</div><div class="line">                        dialog.dismiss();</div><div class="line">                    &#125;</div><div class="line">                &#125;)</div><div class="line">                .setNegativeButton(R.string.cancel, <span class="keyword">new</span> ConfirmDialogFragment.IDialogClickListener() &#123;</div><div class="line">                    <span class="meta">@Override</span></div><div class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(ConfirmDialogFragment dialog)</span> </span>&#123;</div><div class="line">                        dialog.dismiss();</div><div class="line">                    &#125;</div><div class="line">                &#125;)</div><div class="line">                .setCancelable(<span class="keyword">false</span>)</div><div class="line">                .setCancelableOutside(<span class="keyword">false</span>)</div><div class="line">                .show();</div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/07/PageAdapter-VS-FragmentPagerAdapter-VS-FragmentStatePagerAdapter/" rel="next" title="PagerAdapter VS FragmentPagerAdapter VS FragmentStatePagerAdapter">
+                <i class="fa fa-chevron-left"></i> PagerAdapter VS FragmentPagerAdapter VS FragmentStatePagerAdapter
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/05/03/Android仿iOS照片应用Moments-UI实现/" rel="prev" title="Android仿iOS照片应用Moments UI实现">
+                Android仿iOS照片应用Moments UI实现 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/03/24/使用DialogFragment代替传统Dialog/"
+           data-title="使用DialogFragment代替传统Dialog" data-url="https://xiangnan.github.io/2017/03/24/使用DialogFragment代替传统Dialog/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/gxn.jpg"
+               alt="Yolo" />
+          <p class="site-author-name" itemprop="name">Yolo</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">15</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xiangnan" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/1998010247" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.douban.com/people/146521945/" target="_blank" title="DouBan">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  DouBan
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/gu-xiang-nan-3" target="_blank" title="ZhiHu">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  ZhiHu
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么要使用DialogFragment"><span class="nav-number">1.</span> <span class="nav-text">为什么要使用DialogFragment</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建DialogFragment两种方式"><span class="nav-number">2.</span> <span class="nav-text">创建DialogFragment两种方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DialogFragment的管理"><span class="nav-number">3.</span> <span class="nav-text">DialogFragment的管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、DialogFactory"><span class="nav-number">3.1.</span> <span class="nav-text">1、DialogFactory</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、链式编程"><span class="nav-number">3.2.</span> <span class="nav-text">2、链式编程</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yolo</span>
+</div>
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"xiangnan"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+<script type="text/javascript" async src="//push.zhanzhang.baidu.com/push.js">
+</script>
+
+
+</body>
+</html>

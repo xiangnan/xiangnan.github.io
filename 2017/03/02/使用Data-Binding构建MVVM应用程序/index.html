@@ -1,0 +1,718 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android, Yolo, xiangnan" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="Data Binding是Google I/O大会上官方推介的，官方原生支持 MVVM 模型可以让我们更快速更好的构建代码框架。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Data Binding构建MVVM应用程序">
+<meta property="og:url" content="https://xiangnan.github.io/2017/03/02/使用Data-Binding构建MVVM应用程序/index.html">
+<meta property="og:site_name" content="Yolo">
+<meta property="og:description" content="Data Binding是Google I/O大会上官方推介的，官方原生支持 MVVM 模型可以让我们更快速更好的构建代码框架。">
+<meta property="og:updated_time" content="2017-03-02T09:11:48.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用Data Binding构建MVVM应用程序">
+<meta name="twitter:description" content="Data Binding是Google I/O大会上官方推介的，官方原生支持 MVVM 模型可以让我们更快速更好的构建代码框架。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: 'Author'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="https://xiangnan.github.io/2017/03/02/使用Data-Binding构建MVVM应用程序/"/>
+
+  <title> 使用Data Binding构建MVVM应用程序 | Yolo </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-84862254-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?9ee03fcc737833d8cfeb282e7670f86b";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Yolo</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">You only live once.</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                使用Data Binding构建MVVM应用程序
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Posted on</span>
+            <time itemprop="dateCreated" datetime="2017-03-02T11:02:01+08:00" content="2017-03-02">
+              2017-03-02
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/03/02/使用Data-Binding构建MVVM应用程序/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/03/02/使用Data-Binding构建MVVM应用程序/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv"><i class="fa fa-file-o"></i>
+              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Data Binding是Google I/O大会上官方推介的，官方原生支持 MVVM 模型可以让我们更快速更好的构建代码框架。<br><a id="more"></a></p>
+<h2 id="Data-Binding-性能"><a href="#Data-Binding-性能" class="headerlink" title="Data Binding 性能"></a>Data Binding 性能</h2><p>在Data Binding前已经有像RoboGuice、ButterKnife 这样的依赖注入框架，那么为什么要使用Data Binding？<br>1、Data Binding可以使代码更加干净优雅，使你的工作更加简单<br>首先再也不用findViewById，一些依赖注入框架像ButterKnife可以很漂亮的帮你绑定资源像这样@Bind(R.id.title) TextView title;，但是控件一多还是有非常多的绑定，<br>而Data Binding可以更进一步的帮你减少不必要的代码像这样mBinding.setUser(user);<br>2、Data Binding性能<br>若是findViewById，实际上是对所有子view都遍历了一遍，而每次findViewById都去遍历一遍。而Data Binding可以做到编译时就知道对应的view，只需遍历布局层次一次，就可以收集到所有的 View。<br>若是依赖注入的框架，我们知道数据绑定这类库是缓慢的，而Data Binding在性能方面是零反射，即一切都发生在编译期。</p>
+<h2 id="Data-Binding-使用"><a href="#Data-Binding-使用" class="headerlink" title="Data Binding 使用"></a>Data Binding 使用</h2><p>确保 Android 的 Gradle 插件版本不低于 1.5.0<br>修改对应模块（Module）的 build.gradle：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">android &#123;</div><div class="line">    ....</div><div class="line">    dataBinding &#123;</div><div class="line">        enabled = <span class="literal">true</span></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="Data-Binding-创建"><a href="#Data-Binding-创建" class="headerlink" title="Data Binding 创建"></a>Data Binding 创建</h2><p>默认会根据xml文件名生成Data Binding类（会转换为首字母大写并添加Binding后缀）<br>若为Activity<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">protected void onCreate(Bundle savedInstanceState) &#123;</div><div class="line">   super.onCreate(savedInstanceState);</div><div class="line">   MainActivityBinding binding = DataBindingUtil.setContentView(this, R.layout.main_activity);</div><div class="line">   //or</div><div class="line">   //MainActivityBinding binding = MainActivityBinding.inflate(getLayoutInflater());</div><div class="line">   User user = new User(<span class="string">"Test"</span>, <span class="string">"User"</span>);</div><div class="line">   binding.setUser(user);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>若为fragment<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">private FragmentNotificationBinding mBinding;</div><div class="line">@Override</div><div class="line">public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) &#123;</div><div class="line">    mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_notification, container, <span class="literal">false</span>);</div><div class="line">    mBinding.setNotification(notification);</div><div class="line">    <span class="built_in">return</span> mBinding.getRoot();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>若为Custom View<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">private LayoutCameraStatusBinding mBinding;</div><div class="line">public CameraStatusView(Context context) &#123;</div><div class="line">    super(context);</div><div class="line">    init(context);</div><div class="line">&#125;</div><div class="line">private void init(Context context) &#123;</div><div class="line">    mContext = context;</div><div class="line">    mBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.layout_camera_status, this, <span class="literal">true</span>);</div><div class="line">&#125;</div><div class="line">public void initCameraStatus(CameraStatus cameraStatus) &#123;</div><div class="line">    mBinding.setStatus(cameraStatus);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>若为Recyclerview/ListView<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">//<span class="keyword">in</span> ChatItemLeftViewHolder class</div><div class="line">public class ChatItemLeftViewHolder extends RecyclerView.ViewHolder &#123;</div><div class="line">    public final RecyclerviewItemChatLeftBinding binding;</div><div class="line"></div><div class="line">    public ChatItemLeftViewHolder(View rootView) &#123;</div><div class="line">        super(rootView);</div><div class="line">        binding = DataBindingUtil.bind(rootView);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">//<span class="keyword">in</span> adapter</div><div class="line">@Override</div><div class="line">public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) &#123;</div><div class="line">    <span class="keyword">if</span> (viewType == ITEM_TYPE_SENDER) &#123;</div><div class="line">        RecyclerviewItemChatLeftBinding binding = RecyclerviewItemChatLeftBinding.inflate(LayoutInflater.from(parent.getContext()), parent, <span class="literal">false</span>);</div><div class="line">        <span class="built_in">return</span> new ChatItemLeftViewHolder(binding.getRoot());</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        RecyclerviewItemChatRightBinding binding = RecyclerviewItemChatRightBinding.inflate(LayoutInflater.from(parent.getContext()), parent, <span class="literal">false</span>);</div><div class="line">        <span class="built_in">return</span> new ChatItemRightViewHolder(binding.getRoot());</div><div class="line">    &#125;</div><div class="line">    //or</div><div class="line">    //ListItemBinding binding = DataBindingUtil.inflate(layoutInflater, R.layout.list_item, viewGroup, <span class="literal">false</span>);</div><div class="line">&#125;</div><div class="line">@Override</div><div class="line">public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) &#123;</div><div class="line">    Message message = messages.get(position);</div><div class="line">    <span class="keyword">if</span> (holder instanceof ChatItemLeftViewHolder) &#123;</div><div class="line">        ((ChatItemLeftViewHolder) holder).binding.setMessage(message);</div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (holder instanceof ChatItemRightViewHolder) &#123;</div><div class="line">        ((ChatItemRightViewHolder) holder).binding.setMessage(message);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>其他用法<a href="https://developer.android.com/topic/libraries/data-binding/index.html" target="_blank" rel="external">参见官方文档</a></p>
+<h2 id="Data-Binding-构建MVVM应用程序"><a href="#Data-Binding-构建MVVM应用程序" class="headerlink" title="Data Binding 构建MVVM应用程序"></a>Data Binding 构建MVVM应用程序</h2><p>MVVM(Model-View-ViewModel)</p>
+<h3 id="Model"><a href="#Model" class="headerlink" title="Model"></a>Model</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">//bean</div><div class="line">public class CameraStatus &#123;</div><div class="line">    //此处省略</div><div class="line">&#125;</div><div class="line">public class CameraStatusModel &#123;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="View"><a href="#View" class="headerlink" title="View"></a>View</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version=<span class="string">"1.0"</span> encoding=<span class="string">"utf-8"</span>?&gt;</div><div class="line">&lt;layout xmlns:android=<span class="string">"http://schemas.android.com/apk/res/android"</span></div><div class="line">    xmlns:tools=<span class="string">"http://schemas.android.com/tools"</span>&gt;</div><div class="line"></div><div class="line">    &lt;data&gt;</div><div class="line"></div><div class="line">        &lt;variable</div><div class="line">            name=<span class="string">"status"</span></div><div class="line">            <span class="built_in">type</span>=<span class="string">"com.royole.focuslib.live.CameraStatus"</span> /&gt;</div><div class="line"></div><div class="line">        &lt;import <span class="built_in">type</span>=<span class="string">"android.view.View"</span> /&gt;</div><div class="line">    &lt;/data&gt;</div><div class="line"></div><div class="line">    &lt;LinearLayout</div><div class="line">        android:layout_width=<span class="string">"match_parent"</span></div><div class="line">        android:layout_height=<span class="string">"match_parent"</span></div><div class="line">        android:background=<span class="string">"@android:color/black"</span></div><div class="line">        android:gravity=<span class="string">"center_vertical"</span></div><div class="line">        android:orientation=<span class="string">"horizontal"</span>&gt;</div><div class="line">        //此处省略</div><div class="line">        &lt;TextView</div><div class="line">            android:id=<span class="string">"@+id/tv_sd_remain_count"</span></div><div class="line">            android:layout_width=<span class="string">"wrap_content"</span></div><div class="line">            android:layout_height=<span class="string">"wrap_content"</span></div><div class="line">            android:text=<span class="string">"@&#123;String.valueOf(status.remainCount)&#125;"</span></div><div class="line">            android:textAppearance=<span class="string">"?android:attr/textAppearanceSmall"</span></div><div class="line">            android:textColor=<span class="string">"@android:color/white"</span> /&gt;</div><div class="line"></div><div class="line">        &lt;ImageView</div><div class="line">            android:id=<span class="string">"@+id/iv_self_timer"</span></div><div class="line">            android:layout_width=<span class="string">"20dp"</span></div><div class="line">            android:layout_height=<span class="string">"wrap_content"</span></div><div class="line">            android:src=<span class="string">"@mipmap/camera_status_self_timer"</span></div><div class="line">            android:visibility=<span class="string">"@&#123;status.isSelfTimer ? View.VISIBLE : View.GONE&#125;"</span> /&gt;</div><div class="line"></div><div class="line">    &lt;/LinearLayout&gt;</div><div class="line">&lt;/layout&gt;</div></pre></td></tr></table></figure>
+<h3 id="ViewModel"><a href="#ViewModel" class="headerlink" title="ViewModel"></a>ViewModel</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">public class CameraStatusView extends LinearLayout &#123;</div><div class="line"></div><div class="line">    private final String TAG = CameraStatusView.this.getClass().getSimpleName();</div><div class="line">    private Context mContext;</div><div class="line">    private LayoutCameraStatusBinding mBinding;</div><div class="line"></div><div class="line">    public CameraStatusView(Context context) &#123;</div><div class="line">        super(context);</div><div class="line">        init(context);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public CameraStatusView(Context context, AttributeSet attrs) &#123;</div><div class="line">        super(context, attrs);</div><div class="line">        init(context);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public CameraStatusView(Context context, AttributeSet attrs, int defStyleAttr) &#123;</div><div class="line">        super(context, attrs, defStyleAttr);</div><div class="line">        init(context);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private void init(Context context) &#123;</div><div class="line">        mContext = context;</div><div class="line">        mBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.layout_camera_status, this, <span class="literal">true</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void initCameraStatus(CameraStatus cameraStatus) &#123;</div><div class="line">        mBinding.setStatus(cameraStatus);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="Data-Binding-高级使用"><a href="#Data-Binding-高级使用" class="headerlink" title="Data Binding 高级使用"></a>Data Binding 高级使用</h2><p>后续进行说明…</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/02/28/RxJava介绍及封装/" rel="next" title="RxJava介绍及封装">
+                <i class="fa fa-chevron-left"></i> RxJava介绍及封装
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/07/PageAdapter-VS-FragmentPagerAdapter-VS-FragmentStatePagerAdapter/" rel="prev" title="PagerAdapter VS FragmentPagerAdapter VS FragmentStatePagerAdapter">
+                PagerAdapter VS FragmentPagerAdapter VS FragmentStatePagerAdapter <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/03/02/使用Data-Binding构建MVVM应用程序/"
+           data-title="使用Data Binding构建MVVM应用程序" data-url="https://xiangnan.github.io/2017/03/02/使用Data-Binding构建MVVM应用程序/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/gxn.jpg"
+               alt="Yolo" />
+          <p class="site-author-name" itemprop="name">Yolo</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">15</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xiangnan" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/1998010247" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.douban.com/people/146521945/" target="_blank" title="DouBan">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  DouBan
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/gu-xiang-nan-3" target="_blank" title="ZhiHu">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  ZhiHu
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Data-Binding-性能"><span class="nav-number">1.</span> <span class="nav-text">Data Binding 性能</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Data-Binding-使用"><span class="nav-number">2.</span> <span class="nav-text">Data Binding 使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Data-Binding-创建"><span class="nav-number">3.</span> <span class="nav-text">Data Binding 创建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Data-Binding-构建MVVM应用程序"><span class="nav-number">4.</span> <span class="nav-text">Data Binding 构建MVVM应用程序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Model"><span class="nav-number">4.1.</span> <span class="nav-text">Model</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#View"><span class="nav-number">4.2.</span> <span class="nav-text">View</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ViewModel"><span class="nav-number">4.3.</span> <span class="nav-text">ViewModel</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Data-Binding-高级使用"><span class="nav-number">5.</span> <span class="nav-text">Data Binding 高级使用</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yolo</span>
+</div>
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"xiangnan"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+<script type="text/javascript" async src="//push.zhanzhang.baidu.com/push.js">
+</script>
+
+
+</body>
+</html>

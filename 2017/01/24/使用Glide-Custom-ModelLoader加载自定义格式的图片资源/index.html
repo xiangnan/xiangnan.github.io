@@ -1,0 +1,740 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android, Yolo, xiangnan" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="Android Glide是一个开源的图片加载和缓存处理的第三方框架。在得到2014年泰国举行的Google IO大会官方推荐后，被广泛应用在谷歌的官方app里。关于各种图片加载库的缓存策略，网上资源非常丰富，这里不做搬运。可参考因为国内Glide资料较少，特此做个记录。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Glide Custom ModelLoader加载自定义格式的图片资源">
+<meta property="og:url" content="https://xiangnan.github.io/2017/01/24/使用Glide-Custom-ModelLoader加载自定义格式的图片资源/index.html">
+<meta property="og:site_name" content="Yolo">
+<meta property="og:description" content="Android Glide是一个开源的图片加载和缓存处理的第三方框架。在得到2014年泰国举行的Google IO大会官方推荐后，被广泛应用在谷歌的官方app里。关于各种图片加载库的缓存策略，网上资源非常丰富，这里不做搬运。可参考因为国内Glide资料较少，特此做个记录。">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006etkvUjw1fc1iyqfdnuj30z90gl44v.jpg">
+<meta property="og:updated_time" content="2017-01-24T06:29:14.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用Glide Custom ModelLoader加载自定义格式的图片资源">
+<meta name="twitter:description" content="Android Glide是一个开源的图片加载和缓存处理的第三方框架。在得到2014年泰国举行的Google IO大会官方推荐后，被广泛应用在谷歌的官方app里。关于各种图片加载库的缓存策略，网上资源非常丰富，这里不做搬运。可参考因为国内Glide资料较少，特此做个记录。">
+<meta name="twitter:image" content="https://ws1.sinaimg.cn/large/006etkvUjw1fc1iyqfdnuj30z90gl44v.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: 'Author'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="https://xiangnan.github.io/2017/01/24/使用Glide-Custom-ModelLoader加载自定义格式的图片资源/"/>
+
+  <title> 使用Glide Custom ModelLoader加载自定义格式的图片资源 | Yolo </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-84862254-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?9ee03fcc737833d8cfeb282e7670f86b";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Yolo</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">You only live once.</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                使用Glide Custom ModelLoader加载自定义格式的图片资源
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Posted on</span>
+            <time itemprop="dateCreated" datetime="2017-01-24T10:14:42+08:00" content="2017-01-24">
+              2017-01-24
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/01/24/使用Glide-Custom-ModelLoader加载自定义格式的图片资源/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/24/使用Glide-Custom-ModelLoader加载自定义格式的图片资源/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv"><i class="fa fa-file-o"></i>
+              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Android Glide是一个开源的图片加载和缓存处理的第三方框架。在得到2014年泰国举行的Google IO大会官方推荐后，被广泛应用在谷歌的官方app里。<br>关于各种图片加载库的缓存策略，网上资源非常丰富，这里不做搬运。<a href="http://www.trinea.cn/android/android-image-cache-compare/" target="_blank" rel="external">可参考</a><br>因为国内Glide资料较少，特此做个记录。<br><a id="more"></a></p>
+<h2 id="Picasso-v-s-Imageloader-v-s-Fresco-v-s-Glide"><a href="#Picasso-v-s-Imageloader-v-s-Fresco-v-s-Glide" class="headerlink" title="Picasso v/s Imageloader v/s Fresco v/s Glide"></a>Picasso v/s Imageloader v/s Fresco v/s Glide</h2><p>那么在众多的图片加载库中，为什么选择Glide？<br>Universal Image Loader、Picasso（Square出品）、Volley ImageLoader（Google官方出品）、Fresco（Facebook出品）的对比图如下<br><a href="http://stackoverflow.com/questions/29363321/picasso-v-s-imageloader-v-s-fresco-vs-glide" target="_blank" rel="external">摘自stackoverflow</a><br><img src="https://ws1.sinaimg.cn/large/006etkvUjw1fc1iyqfdnuj30z90gl44v.jpg" alt="对比图"></p>
+<h2 id="Glide特点"><a href="#Glide特点" class="headerlink" title="Glide特点"></a>Glide特点</h2><p>从Glide的官方wiki上，得知Glide有如下特点<br><a href="https://github.com/bumptech/glide/wiki" target="_blank" rel="external">Glide官方wiki</a></p>
+<ul>
+<li>支持GIF的加载，支持常见数据格式jpg、png、webp、SVG等，支持多种数据源网络、Resource资源、assets 、File、Uri、字节数组等</li>
+<li>支持本地Video缩略图加载</li>
+<li>支持原图转换缩略图加载、可设置加载尺寸、加载形式（如圆形图片、拉伸截取中间部分显示、等比拉伸填满等）</li>
+<li>支持根据Activity、Fragment、Context的生命周期自动管理请求、可设置请求监听</li>
+<li>支持淡入淡出动画加载，自定义动画</li>
+<li>支持高效处理加载Bitmap</li>
+<li>支持自定义缓存策略、清理缓存</li>
+<li>最大的特点，可配置度高，是一个很灵活的图片加载框架，如可自定义数据源获取、中间转换、目标数据，同时专注于平滑滚动的图片加载，速度更快</li>
+</ul>
+<h2 id="Glide自定义ModelLoader"><a href="#Glide自定义ModelLoader" class="headerlink" title="Glide自定义ModelLoader"></a>Glide自定义ModelLoader</h2><p>由于项目需求，使用获取缩略图的api会根据图片ID输出一个FileOutputstream或Bitmap，需要通过自定义ModelLoader的形式，加载缩略图列表。<br>即实现 Glide.with(mContext).load(“传入图片ID”).into(ImageView);<br><a href="https://github.com/bumptech/glide/issues/634" target="_blank" rel="external">参考</a>中的<a href="https://github.com/licheedev/Custom-Glide-ModelLoader-Demo" target="_blank" rel="external">Demo</a></p>
+<h3 id="自定义一个GlideModule来注册ModelLoader"><a href="#自定义一个GlideModule来注册ModelLoader" class="headerlink" title="自定义一个GlideModule来注册ModelLoader"></a>自定义一个GlideModule来注册ModelLoader</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">public class CustomGlideModule implements GlideModule &#123;</div><div class="line">      @Override </div><div class="line">      public void applyOptions(Context context, GlideBuilder builder) &#123;</div><div class="line">               // Apply options to the builder here.</div><div class="line">        &#125;</div><div class="line"></div><div class="line">      @Override </div><div class="line">      public void registerComponents(Context context, Glide glide) &#123;</div><div class="line">                // register ModelLoaders here.</div><div class="line">                glide.register(String.class, Bitmap.class, new PhotoLoader.Factory());</div><div class="line">        &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在AndroidManifest.xml中注册</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;meta-data</div><div class="line">     android:name=<span class="string">"com.royole.focus.browser.glide.CustomGlideModule"</span></div><div class="line">     android:value=<span class="string">"GlideModule"</span> /&gt;</div></pre></td></tr></table></figure>
+<p>混淆处理</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">-keepnames com.royole.focus.browser.glide.CustomGlideModule</div><div class="line"><span class="comment">#-keep public class * implements com.bumptech.glide.module.GlideModule</span></div></pre></td></tr></table></figure>
+<h3 id="实现自定义的ModelLoader"><a href="#实现自定义的ModelLoader" class="headerlink" title="实现自定义的ModelLoader"></a>实现自定义的ModelLoader</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">public class PhotoLoader implements ModelLoader&lt;String, Bitmap&gt; &#123;</div><div class="line">    public <span class="function"><span class="title">PhotoLoader</span></span>() &#123;</div><div class="line">    &#125;</div><div class="line">    @Override</div><div class="line">    public DataFetcher&lt;Bitmap&gt; getResourceFetcher(String model, int width, int height) &#123;</div><div class="line">        <span class="built_in">return</span> new PhotoFetcher(model);</div><div class="line">    &#125;</div><div class="line">    // ModelLoader Factory</div><div class="line">    public static class Factory implements ModelLoaderFactory&lt;String, Bitmap&gt; &#123;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public ModelLoader&lt;String,Bitmap&gt; build(Context context,GenericLoaderFactory factories) &#123;</div><div class="line">            <span class="built_in">return</span> new PhotoLoader();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public void <span class="function"><span class="title">teardown</span></span>() &#123;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="实现自定义的获取数据格式"><a href="#实现自定义的获取数据格式" class="headerlink" title="实现自定义的获取数据格式"></a>实现自定义的获取数据格式</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">public class PhotoFetcher implements DataFetcher&lt;Bitmap&gt; &#123;</div><div class="line">    private Bitmap mBitmap;</div><div class="line">    public PhotoFetcher(String pid) &#123;</div><div class="line">        mPid = pid;</div><div class="line">    &#125;</div><div class="line">    /**</div><div class="line">     * get image stream ( run <span class="keyword">in</span> glide background thread)</div><div class="line">     */</div><div class="line">    @Override</div><div class="line">    public Bitmap loadData(Priority priority) throws Exception &#123;</div><div class="line">        mBitmap = DSCViewerModel.getThumbnailStream(Integer.parseInt(mPid));// need synchronized</div><div class="line">        <span class="built_in">return</span> mBitmap;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="加载Bitmap到ImageView中"><a href="#加载Bitmap到ImageView中" class="headerlink" title="加载Bitmap到ImageView中"></a>加载Bitmap到ImageView中</h3><p>使用通用加载方式，这里需要了解Glide中的几个基本概念<br><a href="http://angeldevil.me/2016/09/05/glide/" target="_blank" rel="external">参考</a><br><a href="http://www.lightskystreet.com/2015/10/12/glide_source_analysis/" target="_blank" rel="external">参考</a></p>
+<ul>
+<li>Model：The type of model representing the resource.<br>用来加载数据源，加载图片往往需要如url，资源id，文件，也可以是一条Feed流，Glide把这些抽象为一个Model。Model并不能直接解析为图片，比如一个url，是要转换为网络流的InputStream才能被解析为图片的，Model需要进行一次转换才能做为数据解析的数据源，这些转换后的东西就叫做Data。</li>
+<li>Data：The data type that the resource {@link com.bumptech.glide.load.model.ModelLoader} will provide that can be decoded by the {@link com.bumptech.glide.load.ResourceDecoder}.<br>代表原始的，未修改过的资源，与Data相关的如DataFetcher</li>
+<li>Resource：The type of the resource that will be loaded.<br>修改过的资源，是一个包装类，一个wrapper，它wrap一个对象，使这个对象可以通过对象池进行缓存与重用。</li>
+<li>Transcode：The type of resource the decoded resource will be transcoded to.<br>资源转换器</li>
+<li>Encoder：用来持久化数据，把数据缓存到磁盘</li>
+<li>Decoder：用来将数据（InputStream等）解析为Resource</li>
+</ul>
+<p>使用GenericRequestBuilder来加载Bitmap<br><a href="http://stackoverflow.com/questions/31867322/using-glide-to-load-bitmap-into-imageview" target="_blank" rel="external">参考</a><br><a href="https://github.com/bumptech/glide/issues/122" target="_blank" rel="external">参考</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">private final GenericRequestBuilder&lt;String, Bitmap, Bitmap, Bitmap&gt; mGlideBuilder;</div><div class="line">mGlideBuilder = Glide.with(mContext)</div><div class="line">               .using(new PhotoLoader(), Bitmap.class)</div><div class="line">               .from(String.class).as(Bitmap.class)</div><div class="line">               .encoder(new BitmapEncoder(Bitmap.CompressFormat.PNG, 100))</div><div class="line">               .decoder(new BitmapBitmapResourceDecoder(mContext))</div><div class="line">               .cacheDecoder(new FileToStreamDecoder&lt;Bitmap&gt;(new StreamBitmapDecoder(mContext)))</div><div class="line">               .diskCacheStrategy(DiskCacheStrategy.RESULT)</div><div class="line">               .placeholder(R.mipmap.ic_launcher);</div></pre></td></tr></table></figure>
+<h2 id="一些基于Glide的优秀库"><a href="#一些基于Glide的优秀库" class="headerlink" title="一些基于Glide的优秀库"></a>一些基于Glide的优秀库</h2><p>1、<a href="https://github.com/wasabeef/glide-transformations" target="_blank" rel="external">glide-transformations</a><br>transformation库，拥有裁剪，着色，模糊，滤镜等多种转换效果<br>2、<a href="https://github.com/florent37/GlidePalette" target="_blank" rel="external">GlidePalette</a><br>Palette库，调色板</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/13/LeetCode笔记/" rel="next" title="LeetCode笔记">
+                <i class="fa fa-chevron-left"></i> LeetCode笔记
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/01/24/实现Android-WIFI的扫描-特定wifi名-及连接/" rel="prev" title="实现Android WIFI的扫描(特定wifi名)及连接">
+                实现Android WIFI的扫描(特定wifi名)及连接 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/01/24/使用Glide-Custom-ModelLoader加载自定义格式的图片资源/"
+           data-title="使用Glide Custom ModelLoader加载自定义格式的图片资源" data-url="https://xiangnan.github.io/2017/01/24/使用Glide-Custom-ModelLoader加载自定义格式的图片资源/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/gxn.jpg"
+               alt="Yolo" />
+          <p class="site-author-name" itemprop="name">Yolo</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">15</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xiangnan" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/1998010247" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.douban.com/people/146521945/" target="_blank" title="DouBan">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  DouBan
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/gu-xiang-nan-3" target="_blank" title="ZhiHu">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  ZhiHu
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Picasso-v-s-Imageloader-v-s-Fresco-v-s-Glide"><span class="nav-number">1.</span> <span class="nav-text">Picasso v/s Imageloader v/s Fresco v/s Glide</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Glide特点"><span class="nav-number">2.</span> <span class="nav-text">Glide特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Glide自定义ModelLoader"><span class="nav-number">3.</span> <span class="nav-text">Glide自定义ModelLoader</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#自定义一个GlideModule来注册ModelLoader"><span class="nav-number">3.1.</span> <span class="nav-text">自定义一个GlideModule来注册ModelLoader</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现自定义的ModelLoader"><span class="nav-number">3.2.</span> <span class="nav-text">实现自定义的ModelLoader</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现自定义的获取数据格式"><span class="nav-number">3.3.</span> <span class="nav-text">实现自定义的获取数据格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#加载Bitmap到ImageView中"><span class="nav-number">3.4.</span> <span class="nav-text">加载Bitmap到ImageView中</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一些基于Glide的优秀库"><span class="nav-number">4.</span> <span class="nav-text">一些基于Glide的优秀库</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yolo</span>
+</div>
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"xiangnan"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+<script type="text/javascript" async src="//push.zhanzhang.baidu.com/push.js">
+</script>
+
+
+</body>
+</html>

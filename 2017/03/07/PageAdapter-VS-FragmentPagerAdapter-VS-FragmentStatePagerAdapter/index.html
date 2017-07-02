@@ -1,0 +1,730 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android, Yolo, xiangnan" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="ViewPager是一个负责翻页的ViewGroup,需和PagerAdapter配合数据绑定以及生成最终的ViewPageAdapter,FragmentPagerAdapter,FragmentStatePagerAdapter之间的区别，需分情况使用这三个adapterPagerAdapter：当所要展示的视图比较简单时适用FragmentPagerAdapter：当所要展示的视图是Frag">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PagerAdapter VS FragmentPagerAdapter VS FragmentStatePagerAdapter">
+<meta property="og:url" content="https://xiangnan.github.io/2017/03/07/PageAdapter-VS-FragmentPagerAdapter-VS-FragmentStatePagerAdapter/index.html">
+<meta property="og:site_name" content="Yolo">
+<meta property="og:description" content="ViewPager是一个负责翻页的ViewGroup,需和PagerAdapter配合数据绑定以及生成最终的ViewPageAdapter,FragmentPagerAdapter,FragmentStatePagerAdapter之间的区别，需分情况使用这三个adapterPagerAdapter：当所要展示的视图比较简单时适用FragmentPagerAdapter：当所要展示的视图是Frag">
+<meta property="og:updated_time" content="2017-06-05T02:56:32.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="PagerAdapter VS FragmentPagerAdapter VS FragmentStatePagerAdapter">
+<meta name="twitter:description" content="ViewPager是一个负责翻页的ViewGroup,需和PagerAdapter配合数据绑定以及生成最终的ViewPageAdapter,FragmentPagerAdapter,FragmentStatePagerAdapter之间的区别，需分情况使用这三个adapterPagerAdapter：当所要展示的视图比较简单时适用FragmentPagerAdapter：当所要展示的视图是Frag">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: 'Author'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="https://xiangnan.github.io/2017/03/07/PageAdapter-VS-FragmentPagerAdapter-VS-FragmentStatePagerAdapter/"/>
+
+  <title> PagerAdapter VS FragmentPagerAdapter VS FragmentStatePagerAdapter | Yolo </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-84862254-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?9ee03fcc737833d8cfeb282e7670f86b";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Yolo</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">You only live once.</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                PagerAdapter VS FragmentPagerAdapter VS FragmentStatePagerAdapter
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Posted on</span>
+            <time itemprop="dateCreated" datetime="2017-03-07T11:44:32+08:00" content="2017-03-07">
+              2017-03-07
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/03/07/PageAdapter-VS-FragmentPagerAdapter-VS-FragmentStatePagerAdapter/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/03/07/PageAdapter-VS-FragmentPagerAdapter-VS-FragmentStatePagerAdapter/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv"><i class="fa fa-file-o"></i>
+              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>ViewPager是一个负责翻页的ViewGroup,需和PagerAdapter配合数据绑定以及生成最终的View<br>PageAdapter,FragmentPagerAdapter,FragmentStatePagerAdapter之间的区别，需分情况使用这三个adapter<br>PagerAdapter：当所要展示的视图比较简单时适用<br>FragmentPagerAdapter：当所要展示的视图是Fragment，并且数量比较少时适用，会缓存所有Fragment，适用于相对静态的页<br>FragmentStatePagerAdapter：当所要展示的视图是Fragment，并且数量比较多时适用，适用于需要处理有很多页，并且数据动态性较大、占用内存较多的情况</p>
+<a id="more"></a>
+<h2 id="PagerAdapter"><a href="#PagerAdapter" class="headerlink" title="PagerAdapter"></a>PagerAdapter</h2><p>1、PagerAdapter是FragmentPagerAdapter和FragmentStatePagerAdapter的基类<br>2、若需展示自定义view（非fragment），至少继承并重写它的如下方法</p>
+<ul>
+<li><p>instantiateItem(ViewGroup, int)<br>用来inflate view from xml并添加到ViewGroup（是ViewPager的引用）中，在每次ViewPager需要一个用以显示的Object的时候，该函数都会被调用</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">instantiateItem</span><span class="params">(ViewGroup container, <span class="keyword">int</span> position)</span> </span>&#123;</div><div class="line">    <span class="comment">// Inflate a new layout from our resources</span></div><div class="line">    View view = mLayoutInflater.inflate(R.layout.photo_layout, container, <span class="keyword">false</span>);</div><div class="line">    <span class="comment">// Retrieve a TextView from the inflated View, and update it's text</span></div><div class="line">    TextView titleTextView = (TextView) view.findViewById(R.id.title);</div><div class="line">    Utils.DummyItem dummyItem = mDummyItems.get(position);</div><div class="line">    titleTextView.setText(dummyItem.getImageTitle());</div><div class="line">    ImageView imageView = (ImageView) view.findViewById(R.id.image);</div><div class="line">    ImageLoaderUtil.downloadImage(dummyItem.getImageUrl(), imageView);</div><div class="line">    view.setTag(dummyItem);</div><div class="line">    <span class="comment">// Add the newly created View to the ViewPager</span></div><div class="line">    container.addView(view);</div><div class="line">    <span class="comment">// Return the View</span></div><div class="line">    <span class="keyword">return</span> view;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>destroyItem(ViewGroup, int, Object)<br>PagerAdapter默认缓存3个子项（当前view及前一个和后一个子项），当滑动时其它销毁的子项会调用destroyItem</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * Destroy the item from the &#123;<span class="doctag">@link</span> android.support.v4.view.ViewPager&#125;. In our case this is simply removing the</div><div class="line"> * &#123;<span class="doctag">@link</span> View&#125;.</div><div class="line"> */</div><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">destroyItem</span><span class="params">(ViewGroup container, <span class="keyword">int</span> position, Object object)</span> </span>&#123;</div><div class="line">    container.removeView((View) object);</div><div class="line">    Log.i(TAG, <span class="string">"destroyItem() [position: "</span> + position + <span class="string">"]"</span> + <span class="string">" childCount:"</span> + container.getChildCount());</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>getCount()</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getCount</span><span class="params">()</span> </span>&#123;</div><div class="line">   <span class="keyword">return</span> (<span class="keyword">null</span> == mLists ? <span class="number">0</span> : mLists.size());</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>isViewFromObject(View, Object)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * <span class="doctag">@return</span> true if the value returned from &#123;<span class="doctag">@link</span> #instantiateItem(ViewGroup, int)&#125; is the</div><div class="line"> * same object as the &#123;<span class="doctag">@link</span> View&#125; added to the &#123;<span class="doctag">@link</span> android.support.v4.view.ViewPager&#125;.</div><div class="line"> */</div><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isViewFromObject</span><span class="params">(View view, Object object)</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> object == view;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="FragmentPagerAdapter"><a href="#FragmentPagerAdapter" class="headerlink" title="FragmentPagerAdapter"></a>FragmentPagerAdapter</h2><p>1、会缓存所有Fragment，一旦一个fragment被创建，就不会被销毁，被销毁的只是fragment的视图层次，它会被FragmentManager保存起来。<br>fragment第一次被创建时，依次执行onAttach(), onCreate(), onCreateView(), onViewCreated(), onActivityCreated(), onViewStateRestored(), onStart(), onResume()<br>fragment不在屏幕显示时，依次执行onPause(), onStop(), onDestroyView()，并用于不会执行onDestroy()和onDetach()<br>fragment再次显示时，会从FragmentManager中获取，依次执行onCreateView(), onViewCreated(), onActivityCreated(), onViewStateRestored(), onStart(), onResume()<br>ps:当ViewPager设置了setOffscreenPageLimit()生命周期根据具体情况而定</p>
+<p>2、至少需实现getItem()及getCount()</p>
+<ul>
+<li>getItem()</li>
+</ul>
+<p>instantiateItem()函数中判断一下要生成的 Fragment 是否已经生成过了，如果生成过了，就使用旧的，旧的将被 Fragment.attach()；如果没有，就调用 getItem() 生成一个新的，新的对象将被 FragmentTransation.add()。<br>如果需要向 Fragment 对象传递相对静态的数据时，一般通过 Fragment.setArguments() ，这部分代码应当放到 getItem()。它们只会在新生成 Fragment 对象时执行一遍。<br>如果需要在生成 Fragment 对象后，将数据集里面一些动态的数据传递给该 Fragment，那么这部分代码不适合放到 getItem() 中，这部分代码应该放到这个函数的重载里。因为当数据集发生变化时，往往对应的 Fragment 已经生成，如果传递数据部分代码放到了 getItem() 中，这部分代码将不会被调用。这也是为什么调用 PagerAdapter.notifyDataSetChanged() 后，getItem() 没有被调用的一个原因。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> Fragment <span class="title">getItem</span><span class="params">(<span class="keyword">int</span> position)</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> fragmentList.get(position);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getCount</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> (fragmentList == <span class="keyword">null</span> ? <span class="number">0</span> : fragmentList.size());</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="FragmentStatePagerAdapter"><a href="#FragmentStatePagerAdapter" class="headerlink" title="FragmentStatePagerAdapter"></a>FragmentStatePagerAdapter</h2><p>1、与FragmentPagerAdapter不同的地方在于，当Fragment离开视线时则被消除。<br>2、调用destroyItem()函数，将 Fragment 移除，即调用 FragmentTransaction.remove()，并释放其资源。</p>
+<h2 id="BaseFragment封装"><a href="#BaseFragment封装" class="headerlink" title="BaseFragment封装"></a>BaseFragment封装</h2><p>根据项目需求，以下封装了一个Fragment基类，包含加载一次数据的函数loadOnceData()，可设置BaseFragment子类的isLoadedOnce = false;来重置loadOnceData()数据重新加载一次<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">BaseFragment</span> <span class="keyword">extends</span> <span class="title">Fragment</span> </span>&#123;</div><div class="line">    <span class="keyword">protected</span> String TAG = <span class="keyword">this</span>.getClass().getSimpleName();</div><div class="line">    <span class="keyword">protected</span> BaseActivity mActivity;</div><div class="line">    <span class="keyword">protected</span> View mRootView;</div><div class="line">    <span class="keyword">protected</span> <span class="keyword">boolean</span> isLoadedOnce = <span class="keyword">false</span>;</div><div class="line"></div><div class="line">    <span class="comment">// Abstract - M</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">initValues</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> <span class="keyword">int</span> <span class="title">getLayoutId</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">initView</span><span class="params">(View view, Bundle savedInstanceState)</span></span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">loadData</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">loadOnceData</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="comment">// End Abstract - M</span></div><div class="line"></div><div class="line">    <span class="comment">// lifecycle</span></div><div class="line">    <span class="comment">// avoid getActivity return null</span></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onAttach</span><span class="params">(Context context)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>.onAttach(context);</div><div class="line">        <span class="keyword">this</span>.mActivity = (MainTabActivity) context;</div><div class="line">        Logger.d(TAG, <span class="string">"onAttach"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onAttach</span><span class="params">(Activity activity)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>.onAttach(activity);</div><div class="line">        <span class="keyword">this</span>.mActivity = (MainTabActivity) activity;</div><div class="line">        Logger.d(TAG, <span class="string">"onAttach"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">// create fragment</span></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</div><div class="line">        initValues();</div><div class="line">        Logger.d(TAG, <span class="string">"onCreate initValues"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">// init fragment view</span></div><div class="line">    <span class="meta">@Nullable</span></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> View <span class="title">onCreateView</span><span class="params">(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (mRootView == <span class="keyword">null</span>) &#123;</div><div class="line">            mRootView = LayoutInflater.from(mActivity)</div><div class="line">                    .inflate(getLayoutId(), container, <span class="keyword">false</span>);</div><div class="line">        &#125;</div><div class="line">        initView(mRootView, savedInstanceState);</div><div class="line">        Logger.d(TAG, <span class="string">"onCreateView initView"</span>);</div><div class="line">        <span class="keyword">return</span> mRootView;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">// finish create activity</span></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onActivityCreated</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>.onActivityCreated(savedInstanceState);</div><div class="line">        loadData();</div><div class="line">        Logger.d(TAG, <span class="string">"onActivityCreated loadData"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onViewStateRestored</span><span class="params">(@Nullable Bundle savedInstanceState)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>.onViewStateRestored(savedInstanceState);</div><div class="line">        Logger.d(TAG, <span class="string">"onViewStateRestored"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onStart</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>.onStart();</div><div class="line">        Logger.d(TAG, <span class="string">"onStart"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onResume</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>.onResume();</div><div class="line">        Logger.d(TAG, <span class="string">"onResume getUserVisibleHint:"</span> + getUserVisibleHint());</div><div class="line">        <span class="keyword">if</span> (getUserVisibleHint() &amp;&amp; !isLoadedOnce) &#123;</div><div class="line">            loadOnceData();</div><div class="line">            isLoadedOnce = <span class="keyword">true</span>;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setUserVisibleHint</span><span class="params">(<span class="keyword">boolean</span> isVisibleToUser)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>.setUserVisibleHint(isVisibleToUser);</div><div class="line">        Logger.d(TAG, <span class="string">"isVisibleToUser:"</span> + isVisibleToUser + <span class="string">" isVisible:"</span> + isVisible() + <span class="string">" isLoadedOnce:"</span> + isLoadedOnce);</div><div class="line">        <span class="keyword">if</span> (isVisible()) &#123;</div><div class="line">            <span class="keyword">if</span> (isVisibleToUser &amp;&amp; !isLoadedOnce) &#123;</div><div class="line">                loadOnceData();</div><div class="line">                isLoadedOnce = <span class="keyword">true</span>;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="comment">// End lifecycle</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/02/使用Data-Binding构建MVVM应用程序/" rel="next" title="使用Data Binding构建MVVM应用程序">
+                <i class="fa fa-chevron-left"></i> 使用Data Binding构建MVVM应用程序
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/24/使用DialogFragment代替传统Dialog/" rel="prev" title="使用DialogFragment代替传统Dialog">
+                使用DialogFragment代替传统Dialog <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/03/07/PageAdapter-VS-FragmentPagerAdapter-VS-FragmentStatePagerAdapter/"
+           data-title="PagerAdapter VS FragmentPagerAdapter VS FragmentStatePagerAdapter" data-url="https://xiangnan.github.io/2017/03/07/PageAdapter-VS-FragmentPagerAdapter-VS-FragmentStatePagerAdapter/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/gxn.jpg"
+               alt="Yolo" />
+          <p class="site-author-name" itemprop="name">Yolo</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">15</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xiangnan" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/1998010247" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.douban.com/people/146521945/" target="_blank" title="DouBan">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  DouBan
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/gu-xiang-nan-3" target="_blank" title="ZhiHu">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  ZhiHu
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#PagerAdapter"><span class="nav-number">1.</span> <span class="nav-text">PagerAdapter</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FragmentPagerAdapter"><span class="nav-number">2.</span> <span class="nav-text">FragmentPagerAdapter</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FragmentStatePagerAdapter"><span class="nav-number">3.</span> <span class="nav-text">FragmentStatePagerAdapter</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BaseFragment封装"><span class="nav-number">4.</span> <span class="nav-text">BaseFragment封装</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yolo</span>
+</div>
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"xiangnan"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+<script type="text/javascript" async src="//push.zhanzhang.baidu.com/push.js">
+</script>
+
+
+</body>
+</html>

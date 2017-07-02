@@ -1,0 +1,710 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android, Yolo, xiangnan" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="项目涉及到扫描特定wifi名（SSID）前缀，用户选中列表中wifi热点后，自动连接该名称的wifi。因此设计为三个工具类，一个用来扫描特定wifi名前缀的扫描工具类WifiScanner，一个根据SSID连接wifi的连接工具类WifiConnector，以及一个提供对外统一接口配置了扫描和连接信息的管理工具类WifiManager。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="实现Android WIFI的扫描(特定wifi名)及连接">
+<meta property="og:url" content="https://xiangnan.github.io/2017/01/24/实现Android-WIFI的扫描-特定wifi名-及连接/index.html">
+<meta property="og:site_name" content="Yolo">
+<meta property="og:description" content="项目涉及到扫描特定wifi名（SSID）前缀，用户选中列表中wifi热点后，自动连接该名称的wifi。因此设计为三个工具类，一个用来扫描特定wifi名前缀的扫描工具类WifiScanner，一个根据SSID连接wifi的连接工具类WifiConnector，以及一个提供对外统一接口配置了扫描和连接信息的管理工具类WifiManager。">
+<meta property="og:updated_time" content="2017-02-07T03:37:50.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="实现Android WIFI的扫描(特定wifi名)及连接">
+<meta name="twitter:description" content="项目涉及到扫描特定wifi名（SSID）前缀，用户选中列表中wifi热点后，自动连接该名称的wifi。因此设计为三个工具类，一个用来扫描特定wifi名前缀的扫描工具类WifiScanner，一个根据SSID连接wifi的连接工具类WifiConnector，以及一个提供对外统一接口配置了扫描和连接信息的管理工具类WifiManager。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: 'Author'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="https://xiangnan.github.io/2017/01/24/实现Android-WIFI的扫描-特定wifi名-及连接/"/>
+
+  <title> 实现Android WIFI的扫描(特定wifi名)及连接 | Yolo </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-84862254-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?9ee03fcc737833d8cfeb282e7670f86b";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Yolo</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">You only live once.</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                实现Android WIFI的扫描(特定wifi名)及连接
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Posted on</span>
+            <time itemprop="dateCreated" datetime="2017-01-24T14:32:28+08:00" content="2017-01-24">
+              2017-01-24
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/01/24/实现Android-WIFI的扫描-特定wifi名-及连接/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/24/实现Android-WIFI的扫描-特定wifi名-及连接/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv"><i class="fa fa-file-o"></i>
+              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>项目涉及到扫描特定wifi名（SSID）前缀，用户选中列表中wifi热点后，自动连接该名称的wifi。因此设计为三个工具类，一个用来扫描特定wifi名前缀的扫描工具类WifiScanner，一个根据SSID连接wifi的连接工具类WifiConnector，以及一个提供对外统一接口配置了扫描和连接信息的管理工具类WifiManager。<br><a id="more"></a></p>
+<h2 id="扫描"><a href="#扫描" class="headerlink" title="扫描"></a>扫描</h2><p>扫描的流程为：检测是否打开WIFI（未打开需打开）–&gt; 注册扫描监听广播 –&gt; 开启循环扫描线程（设置超时时间）–&gt; 收到扫描结果广播 –&gt; 处理结果（根据特定wifi名过滤wifi）–&gt; 取消广播监听、扫描任务 –&gt; 返回过滤后的结果<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div></pre></td><td class="code"><pre><div class="line">// 摘取关键代码</div><div class="line">public class WifiScanner &#123;</div><div class="line">    /**</div><div class="line">     * Scan wifi with modelName</div><div class="line">     */</div><div class="line">    public void <span class="function"><span class="title">startScan</span></span>() &#123;</div><div class="line">        turnOnWifi();</div><div class="line">        registerReceiver();</div><div class="line">        new Thread(mScanLoopRunnable).start();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private Runnable mScanLoopRunnable = new <span class="function"><span class="title">Runnable</span></span>() &#123;</div><div class="line">        @Override</div><div class="line">        public void <span class="function"><span class="title">run</span></span>() &#123;</div><div class="line">            mWifiMgr.startScan();</div><div class="line">            mLock.lock();</div><div class="line">            try &#123;</div><div class="line">                mCondition.await(mScanTimeOutSec, TimeUnit.SECONDS);</div><div class="line">            &#125; catch (InterruptedException e) &#123;</div><div class="line">                e.printStackTrace();</div><div class="line">            &#125;</div><div class="line">            mLock.unlock();</div><div class="line">            mHandler.postDelayed(this, mScanTimeOutSec * 1000);</div><div class="line">        &#125;</div><div class="line">    &#125;;</div><div class="line"></div><div class="line">    private class WifiScanReceiver extends BroadcastReceiver &#123;</div><div class="line">        @Override</div><div class="line">        public void onReceive(Context context, Intent intent) &#123;</div><div class="line">            List&lt;String&gt; ssidResults = new ArrayList&lt;&gt;();</div><div class="line">            List&lt;ScanResult&gt; scanResults = mWifiMgr.getScanResults();</div><div class="line">            int count = 0;</div><div class="line">            <span class="keyword">for</span> (ScanResult result : scanResults) &#123;</div><div class="line">                <span class="keyword">if</span> (count &lt; mMaxScanListNumber) &#123;</div><div class="line">                    <span class="keyword">if</span> (result.SSID.startsWith(mModelName)) &#123;</div><div class="line">                        ssidResults.add(result.SSID);</div><div class="line">                        count++;</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            <span class="keyword">if</span> (ssidResults.isEmpty()) &#123;</div><div class="line">                mScanListener.onWifiScanFailed(RemoteControlErrorDefine.NoDSCFound_Error);</div><div class="line">            &#125; <span class="keyword">else</span> &#123;</div><div class="line">                mScanListener.onWifiScanSuccess(ssidResults);</div><div class="line">            &#125;</div><div class="line">            unRegisterReceiver();</div><div class="line">            mHandler.removeCallbacks(mScanLoopRunnable);            </div><div class="line">            mLock.lock();</div><div class="line">            mCondition.signalAll();</div><div class="line">            mLock.unlock();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public interface WifiScanListener &#123;</div><div class="line">        void onWifiDisable();</div><div class="line">        void onWifiScanFailed(int errorType);</div><div class="line">        void onWifiScanSuccess(List&lt;String&gt; results);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="连接"><a href="#连接" class="headerlink" title="连接"></a>连接</h2><p>连接的流程为：开启连接线程 –&gt; 注册客户端wifi状态改变广播 –&gt; 根据ssid、密码、安全模式连接wifi –&gt; 返回wifi连接结果 –&gt; 取消广播监听<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div></pre></td><td class="code"><pre><div class="line">// 摘取关键代码</div><div class="line">public class WifiConnector &#123;</div><div class="line">    /**</div><div class="line">     * connect to wifi</div><div class="line">     */</div><div class="line">    public void connect(final String ssid, final String password, final int mode) &#123;</div><div class="line">        new Thread(new <span class="function"><span class="title">Runnable</span></span>() &#123;</div><div class="line"></div><div class="line">            @Override</div><div class="line">            public void <span class="function"><span class="title">run</span></span>() &#123;</div><div class="line">                registerReceiver();</div><div class="line">                <span class="keyword">if</span> (!connectWifi(ssid, password, mode)) &#123;</div><div class="line">                    mWifiConnectListener.onWifiConnectCompleted(<span class="literal">false</span>);</div><div class="line">                &#125; <span class="keyword">else</span> &#123;</div><div class="line">                    mWifiConnectListener.onWifiConnectCompleted(<span class="literal">true</span>);</div><div class="line">                &#125;</div><div class="line">                unRegisterReceiver();</div><div class="line">            &#125;</div><div class="line">        &#125;).start();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private boolean connectWifi(String ssid, String password, int mode) &#123;</div><div class="line">        WifiConfiguration cfg = new WifiConfiguration();</div><div class="line">        cfg.SSID = <span class="string">"\""</span> + ssid + <span class="string">"\""</span>;</div><div class="line">        switch (mode) &#123;</div><div class="line">            <span class="keyword">case</span> WEP_SECURITY_MODE:</div><div class="line">                cfg.wepKeys[0] = <span class="string">"\""</span> + password + <span class="string">"\""</span>;</div><div class="line">                cfg.wepTxKeyIndex = 0;</div><div class="line">                cfg.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);</div><div class="line">                cfg.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP40);</div><div class="line">                <span class="built_in">break</span>;</div><div class="line">            <span class="keyword">case</span> WPA_SECURITY_MODE:</div><div class="line">                cfg.preSharedKey = <span class="string">"\""</span> + password + <span class="string">"\""</span>;</div><div class="line">                <span class="built_in">break</span>;</div><div class="line">            <span class="keyword">case</span> OPEN_SECURITY_MODE:</div><div class="line">                cfg.wepKeys[0] = <span class="string">"\""</span> + password + <span class="string">"\""</span>;</div><div class="line">                cfg.wepTxKeyIndex = 0;</div><div class="line">                cfg.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);</div><div class="line">                <span class="built_in">break</span>;</div><div class="line">            default:</div><div class="line">                cfg.preSharedKey = <span class="string">"\""</span> + password + <span class="string">"\""</span>;</div><div class="line">        &#125;</div><div class="line">        cfg.status = WifiConfiguration.Status.ENABLED;</div><div class="line">        mNetworkID = mWifiMgr.addNetwork(cfg);</div><div class="line">        mLock.lock();</div><div class="line">        mIsConnnected = <span class="literal">false</span>;</div><div class="line">        <span class="keyword">if</span> (!mWifiMgr.enableNetwork(mNetworkID, <span class="literal">true</span>)) &#123;</div><div class="line">            mLock.unlock();</div><div class="line">            <span class="built_in">return</span> <span class="literal">false</span>;</div><div class="line">        &#125;</div><div class="line">        try &#123;</div><div class="line">            mCondition.await(WIFI_CONNECT_TIMEOUT_SEC, TimeUnit.SECONDS);</div><div class="line">        &#125; catch (InterruptedException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">        mLock.unlock();</div><div class="line">        <span class="built_in">return</span> mIsConnnected;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private class WiFiConncetReceiver extends BroadcastReceiver &#123;</div><div class="line">        @Override</div><div class="line">        public void onReceive(Context context, Intent intent) &#123;</div><div class="line">            <span class="keyword">if</span> (!WifiManager.SUPPLICANT_STATE_CHANGED_ACTION.equals(intent.getAction())) &#123;</div><div class="line">                <span class="built_in">return</span>;</div><div class="line">            &#125;</div><div class="line">            mLock.lock();</div><div class="line">            WifiInfo info = mWifiMgr.getConnectionInfo();</div><div class="line">            <span class="keyword">if</span> (info.getNetworkId() == mNetworkID &amp;&amp; info.getSupplicantState() == SupplicantState.COMPLETED) &#123;</div><div class="line">                mIsConnnected = <span class="literal">true</span>;</div><div class="line">                mCondition.signalAll();</div><div class="line">            &#125;</div><div class="line">            mLock.unlock();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public interface WifiConnectListener &#123;</div><div class="line">        void onWifiConnectCompleted(boolean isConnected);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="管理"><a href="#管理" class="headerlink" title="管理"></a>管理</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">public class WifiController implements WifiScanner.WifiScanListener, WifiConnector.WifiConnectListener &#123;</div><div class="line">    // init scanner and connector</div><div class="line">    public WifiController(Context context) &#123;</div><div class="line">        mContext = context;</div><div class="line">        mWifiMgr = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);</div><div class="line">        mScanner = new WifiScanner(context, mWifiMgr);</div><div class="line">        mScanner.setmModelName(<span class="string">"XXX"</span>);</div><div class="line">        mScanner.setScanListener(this);</div><div class="line">        mConnector = new WifiConnector(context, mWifiMgr);</div><div class="line">        mConnector.setConnectListener(this);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="权限"><a href="#权限" class="headerlink" title="权限"></a>权限</h2><p>在Manifest.xml中配置相应权限<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&lt;uses-permission android:name=<span class="string">"android.permission.ACCESS_WIFI_STATE"</span> /&gt;</div><div class="line">&lt;uses-permission android:name=<span class="string">"android.permission.CHANGE_WIFI_STATE"</span> /&gt;</div><div class="line">&lt;uses-permission android:name=<span class="string">"android.permission.ACCESS_NETWORK_STATE"</span> /&gt;</div><div class="line">&lt;uses-permission android:name=<span class="string">"android.permission.CHANGE_NETWORK_STATE"</span> /&gt;</div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/01/24/使用Glide-Custom-ModelLoader加载自定义格式的图片资源/" rel="next" title="使用Glide Custom ModelLoader加载自定义格式的图片资源">
+                <i class="fa fa-chevron-left"></i> 使用Glide Custom ModelLoader加载自定义格式的图片资源
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/02/28/RxJava介绍及封装/" rel="prev" title="RxJava介绍及封装">
+                RxJava介绍及封装 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/01/24/实现Android-WIFI的扫描-特定wifi名-及连接/"
+           data-title="实现Android WIFI的扫描(特定wifi名)及连接" data-url="https://xiangnan.github.io/2017/01/24/实现Android-WIFI的扫描-特定wifi名-及连接/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/gxn.jpg"
+               alt="Yolo" />
+          <p class="site-author-name" itemprop="name">Yolo</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">15</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xiangnan" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/1998010247" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.douban.com/people/146521945/" target="_blank" title="DouBan">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  DouBan
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/gu-xiang-nan-3" target="_blank" title="ZhiHu">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  ZhiHu
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#扫描"><span class="nav-number">1.</span> <span class="nav-text">扫描</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#连接"><span class="nav-number">2.</span> <span class="nav-text">连接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#管理"><span class="nav-number">3.</span> <span class="nav-text">管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#权限"><span class="nav-number">4.</span> <span class="nav-text">权限</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yolo</span>
+</div>
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"xiangnan"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+<script type="text/javascript" async src="//push.zhanzhang.baidu.com/push.js">
+</script>
+
+
+</body>
+</html>

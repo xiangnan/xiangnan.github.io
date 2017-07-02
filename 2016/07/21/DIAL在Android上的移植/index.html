@@ -1,0 +1,804 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android, Yolo, xiangnan" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="无线显示标准HDMI使我们连接TV或者扩展屏，但是是有线连接。无线连接包括以下几种技术：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DIAL Server在Android上的移植">
+<meta property="og:url" content="https://xiangnan.github.io/2016/07/21/DIAL在Android上的移植/index.html">
+<meta property="og:site_name" content="Yolo">
+<meta property="og:description" content="无线显示标准HDMI使我们连接TV或者扩展屏，但是是有线连接。无线连接包括以下几种技术：">
+<meta property="og:updated_time" content="2017-06-05T02:59:22.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="DIAL Server在Android上的移植">
+<meta name="twitter:description" content="无线显示标准HDMI使我们连接TV或者扩展屏，但是是有线连接。无线连接包括以下几种技术：">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: 'Author'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="https://xiangnan.github.io/2016/07/21/DIAL在Android上的移植/"/>
+
+  <title> DIAL Server在Android上的移植 | Yolo </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-84862254-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?9ee03fcc737833d8cfeb282e7670f86b";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Yolo</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">You only live once.</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                DIAL Server在Android上的移植
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Posted on</span>
+            <time itemprop="dateCreated" datetime="2016-07-21T17:16:04+08:00" content="2016-07-21">
+              2016-07-21
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/07/21/DIAL在Android上的移植/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/21/DIAL在Android上的移植/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv"><i class="fa fa-file-o"></i>
+              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="无线显示标准"><a href="#无线显示标准" class="headerlink" title="无线显示标准"></a>无线显示标准</h2><p>HDMI使我们连接TV或者扩展屏，但是是有线连接。<br>无线连接包括以下几种技术：</p>
+<a id="more"></a>
+<ul>
+<li>AirPlay是苹果的无线连接技术。可以通过WiFi将iPhone 、iPad、iPod touch 等iOS 设备上的包括图片、音频、视频通过无线的方式传输到支持AirPlay 设备，还可以实现镜像及扩展。</li>
+<li>DLNA，Digital Living Network Alliance，是索尼、英特尔、微软等发起的一套 PC、移动设备、消费电器之间互联互通的协议。DLNA 并没有Apple TV的AirPlay 的镜像功能，也没有Apple TV 所支持的双屏体游戏体验。目前DLNA更多只是能将手机的照片和视频投送到大屏幕中。DLNA是基于UPnP的，严格上讲不算是wireless display，从一个设备的本地存储中拿内容到另外一个设备上去display。</li>
+<li>Miracast是由Wi-Fi联盟制定，以Wi-Fi直连为基础的无线显示标准，支持投送和镜像功能和AirPlay差不多。安卓4.2和win8支持。但目前各家设备对miracast支持的都不太好，延迟大，兼容性不好。作为一个标准，miracast似乎没有对厂家有统一的”miracast”mark授权。大部分厂家各干各，比如LG叫smartshare，三星叫allshare cast，索尼叫screen mirroring，松下叫display mirroring。</li>
+<li>WiDi是intel的wireless display技术，基于wifi direct。从WiDi 3.5开始兼容miracast。</li>
+<li>DIAL是美国网络视频巨头YouTube及Netflix联合开发一种新协议，以对抗苹果的AirPlay。</li>
+<li>chromecast是一个插在HDMI口上的接收器。基于DIAL协议，运行简化的chrome操作系统，通过终端设备为chromecast设备建立链接，由chromecast设备自行去network上down内容来显示。这是一个搜索，操作与下载显示相互分离的过程，分别在两个设备上进行。chromecast也支持将终端设备内容stream推送到显示设备的功能。</li>
+</ul>
+<h2 id="UPnP"><a href="#UPnP" class="headerlink" title="UPnP"></a>UPnP</h2><p>参考：<a href="https://www.ibm.com/developerworks/cn/linux/other/UPnP/part1/" target="_blank" rel="external">UPnP官网</a>,<a href="http://www.h3c.com.cn/MiniSite/Technology_Circle/Net_Reptile/The_Five/Home/Catalog/201206/747039_97665_0.htm" target="_blank" rel="external">UPnP基本原理</a></p>
+<h2 id="DIAL协议"><a href="#DIAL协议" class="headerlink" title="DIAL协议"></a>DIAL协议</h2><p>参考：<a href="http://www.dial-multiscreen.org/" target="_blank" rel="external">DIAL官方文档</a> DIAL-2ndScreenProtocol-2.0.1.pdf</p>
+<h2 id="DIAL-Server"><a href="#DIAL-Server" class="headerlink" title="DIAL Server"></a>DIAL Server</h2><h3 id="源码说明"><a href="#源码说明" class="headerlink" title="源码说明"></a>源码说明</h3><h4 id="mongoose"><a href="#mongoose" class="headerlink" title="mongoose"></a>mongoose</h4><p>开源且小巧的 web服务器类，实现了对socket的封装。其采用了一个自适应的线程池的模型。<a href="http://www.cnblogs.com/skynet/archive/2010/07/24/1784476.html" target="_blank" rel="external">参考</a></p>
+<h4 id="quick-ssdp（对应DIAL-Service-Discovery）"><a href="#quick-ssdp（对应DIAL-Service-Discovery）" class="headerlink" title="quick_ssdp（对应DIAL Service Discovery）"></a>quick_ssdp（对应DIAL Service Discovery）</h4><ul>
+<li>在handle_mcast()函数中进行socket server bind并监听。<br>监听DIAL Service Discovery中的M-SEARCH多播（组播）请求，判断请求中是否有“urn:dial-multiscreen-org:service:dial:1”，有则返回M-SEARCH响应，Log中打印“Sending SSDP reply to 设备ip：端口”。其中服务器端口号，程序中默认是567890。</li>
+<li>在request_handler()函数中进行设备描述响应。<br>判断为/dd.xml的get请求，返回设备描述信息。</li>
+</ul>
+<h4 id="dial-server（对应DIAL-REST-Service）"><a href="#dial-server（对应DIAL-REST-Service）" class="headerlink" title="dial_server（对应DIAL REST Service）"></a>dial_server（对应DIAL REST Service）</h4><ul>
+<li>在handle_app_status()函数中处理查询应用响应。//GET请求<br>查找app应用是否存在，并返回状态信息（running or stopped）。</li>
+<li>在handle_app_start ()函数中处理启动应用响应。//POST请求<br>首先查找app，若存在执行app启动的回调函数，app启动后更新状态信息。回调函数在main.c中实现，这也是源码中需修改的函数。</li>
+<li>在handle_app_stop()函数中处理停止应用响应。//DELETE请求<br>同理start app流程。</li>
+<li>在request_handler()函数中处理客户端的查询、启动、停止应用请求。<br>判断接受到的请求（GET、POST、DELETE），选择响应的处理函数（handle_app_status、handle_app_start、handle_app_stop）。</li>
+</ul>
+<h3 id="源码修改说明"><a href="#源码修改说明" class="headerlink" title="源码修改说明"></a>源码修改说明</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">static char *spAppYouTubeMatch = <span class="string">"chrome.*google-chrome-dial"</span>;</div><div class="line">static char *spAppYouTubeExecutable = <span class="string">"/opt/google/chrome/google-chrome"</span>;</div></pre></td></tr></table></figure>
+<p>spAppYouTubeMatch为YouTube应用进程名，用于在isAPPRunning()中检测进程名为com.android.chrome的应用是否运行<br>spAppYouTubeExecutable为YouTube应用启动执行路径</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div></pre></td><td class="code"><pre><div class="line">static int isAppRunning( char *pzName, char *pzCommandPattern ) &#123;</div><div class="line">	//通过/proc 文件系统，在运行时访问内核内部数据结构、改变内核设置的机制</div><div class="line">  DIR* proc_fd = opendir(<span class="string">"/proc"</span>);</div><div class="line">  <span class="keyword">if</span>( proc_fd != NULL ) &#123;</div><div class="line">    struct dirent* procEntry;//为了获取某文件夹目录内容，所使用的结构体</div><div class="line">    <span class="keyword">while</span>((procEntry=readdir(proc_fd)) != NULL) &#123;</div><div class="line">    //* 表示匹配0个或多个前面这个字符,^ 匹配一行的开头,$匹配一行的结束</div><div class="line">      <span class="keyword">if</span>( doesMatch( <span class="string">"^[0-9][0-9]*$"</span>, procEntry-&gt;d_name ) ) &#123;</div><div class="line">    	  //proc中包含许多以数字命名的子目录，这些数字表示系统当前正在运行进程的进程号，里面包含对应进程相关的多个信息文件。</div><div class="line">        char exePath[64] = &#123;0,&#125;;//指向启动当前进程的可执行文件（完整路径）的符号链接</div><div class="line">        char link[256] = &#123;0,&#125;;</div><div class="line">        char cmdlinePath[64] = &#123;0,&#125;;//启动当前进程的完整命令</div><div class="line">        char buffer[1024] = &#123;0,&#125;;</div><div class="line">        int len;</div><div class="line">        sprintf( exePath, <span class="string">"/proc/%s/exe"</span>, procEntry-&gt;d_name);</div><div class="line">        sprintf( cmdlinePath, <span class="string">"/proc/%s/cmdline"</span>, procEntry-&gt;d_name);</div><div class="line">        <span class="built_in">printf</span>(<span class="string">"exePath:%s\n"</span>, exePath);</div><div class="line">        <span class="built_in">printf</span>(<span class="string">"cmdlinePatb:%s\n"</span>,cmdlinePath);</div><div class="line"></div><div class="line">        <span class="keyword">if</span>( (len = readlink( exePath, link, sizeof(link)-1)) != -1 ) &#123;//exePath内容拷贝到link中</div><div class="line">          char executable[256] = &#123;0,&#125;;</div><div class="line">          strcat( executable, pzName );//将两个char类型连接结果放在executable</div><div class="line">          strcat( executable, <span class="string">"$"</span> );</div><div class="line">          // TODO: Make this search <span class="keyword">for</span> EOL to prevent <span class="literal">false</span> positivies</div><div class="line">          <span class="built_in">printf</span>(<span class="string">"executable:%s\nlink:%s\n"</span>,executable,link);</div><div class="line">          <span class="keyword">if</span>( !doesMatch( executable, link ) ) &#123;</div><div class="line">            <span class="built_in">continue</span>;</div><div class="line">          &#125;</div><div class="line">          // <span class="keyword">else</span> //fall through, we found it</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">else</span> <span class="built_in">continue</span>;</div><div class="line"></div><div class="line">        <span class="keyword">if</span> (pzCommandPattern != NULL) &#123;</div><div class="line">          FILE *cmdline = fopen(cmdlinePath, <span class="string">"r"</span>);</div><div class="line">          <span class="keyword">if</span> (!cmdline) &#123;</div><div class="line">            <span class="built_in">continue</span>;</div><div class="line">          &#125;</div><div class="line">          <span class="keyword">if</span> (fgets(buffer, 1024, cmdline) == NULL) &#123;</div><div class="line">            fclose(cmdline);</div><div class="line">            <span class="built_in">continue</span>;</div><div class="line">          &#125;</div><div class="line">          fclose(cmdline);</div><div class="line"></div><div class="line">          <span class="keyword">if</span> (!doesMatch( pzCommandPattern, buffer )) &#123;</div><div class="line">            <span class="built_in">continue</span>;</div><div class="line">          &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        closedir(proc_fd);</div><div class="line">        <span class="built_in">return</span> atoi(procEntry-&gt;d_name);//进程号字符串转换为整形</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    closedir(proc_fd);</div><div class="line">  &#125; <span class="keyword">else</span> &#123;</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"/proc failed to open\n"</span>);</div><div class="line">  &#125;</div><div class="line">  <span class="built_in">return</span> 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>此函数用来判断当前是否有YouTube应用运行。<br>Linux 内核提供了一种通过 /proc 文件系统，在运行时访问内核内部数据结构、改变内核设置的机制。proc文件系统是一个伪文件系统，它只存在内存当中，而不占用外存空间。/proc包括一些以数字命名的目录，它们是进程目录。即系统中当前运行的每一个进程都有对应的一个目录在/proc下，以进程的 PID号为目录名，它们是读取进程信息的接口。</p>
+<p>以下是/proc目录中进程N的信息</p>
+<table>
+<thead>
+<tr>
+<th>目录</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>/proc/N</td>
+<td>pid N的进程信息</td>
+</tr>
+<tr>
+<td>/proc/N/cmdline</td>
+<td>进程启动命令</td>
+</tr>
+<tr>
+<td>/proc/N/cwd</td>
+<td>链接到进程当前工作目录</td>
+</tr>
+<tr>
+<td>/proc/N/environ</td>
+<td>进程环境变量列表</td>
+</tr>
+<tr>
+<td>/proc/N/exe</td>
+<td>链接到进程的执行命令文件</td>
+</tr>
+<tr>
+<td>/proc/N/fd</td>
+<td>包含进程相关的所有的文件描述符</td>
+</tr>
+<tr>
+<td>/proc/N/maps</td>
+<td>与进程相关的内存映射信息</td>
+</tr>
+<tr>
+<td>/proc/N/mem</td>
+<td>指代进程持有的内存，不可读</td>
+</tr>
+<tr>
+<td>/proc/N/root</td>
+<td>链接到进程的根目录</td>
+</tr>
+<tr>
+<td>/proc/N/stat</td>
+<td>进程的状态</td>
+</tr>
+<tr>
+<td>/proc/N/statm</td>
+<td>进程使用的内存的状态</td>
+</tr>
+<tr>
+<td>/proc/N/status</td>
+<td>进程状态信息，比stat/statm更具可读性</td>
+</tr>
+<tr>
+<td>/proc/self</td>
+<td>链接到当前正在运行的进程</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">static DIALStatus youtube_start(DIALServer *ds, const char *appname,</div><div class="line">                                const char *payload, const char *additionalDataUrl,</div><div class="line">                                DIAL_run_t *run_id, void *callback_data) &#123;</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"\n\n ** LAUNCH YouTube ** with payload %s\n\n"</span>, payload);</div><div class="line"></div><div class="line">    char url[512] = &#123;0,&#125;, data[512] = &#123;0,&#125;;</div><div class="line">    <span class="keyword">if</span> (strlen(payload) &amp;&amp; strlen(additionalDataUrl))&#123;</div><div class="line">        sprintf( url, <span class="string">"https://www.youtube.com/tv?%s&amp;%s"</span>, payload, additionalDataUrl);</div><div class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span> (strlen(payload))&#123;</div><div class="line">        sprintf( url, <span class="string">"https://www.youtube.com/tv?%s"</span>, payload);</div><div class="line">    &#125;<span class="keyword">else</span>&#123;</div><div class="line">        sprintf( url, <span class="string">"https://www.youtube.com/tv"</span>);</div><div class="line">    &#125;</div><div class="line">    sprintf( data, <span class="string">"--user-data-dir=%s/.config/google-chrome-dial"</span>, getenv(<span class="string">"HOME"</span>) );</div><div class="line"></div><div class="line">    const char * const youtube_args[] = &#123; spAppYouTubeExecutable,</div><div class="line">      spYouTubePS3UserAgent,</div><div class="line">      data, <span class="string">"--app"</span>, url, NULL</div><div class="line">    &#125;;</div><div class="line">    runApplication( youtube_args, run_id );</div><div class="line"></div><div class="line">    <span class="built_in">return</span> kDIALStatusRunning;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>此函数更改为Android平台启动应用的方式，即<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">am start -n com.android.chrome/com.google.android.apps.chrome.Main -d https://www.youtube.com/tv?pairingCode=eac4ae42-8b54-4441-9be3-d8a9abb5c481&amp;v=cKG5HDyTW8o&amp;t=0&amp;additionalDataUrl=http%3A%2F%2Flocalhost%3A56789%2Fapps%2FYouTube%2Fdial_data%3F</div></pre></td></tr></table></figure></p>
+<h3 id="待解决问题"><a href="#待解决问题" class="headerlink" title="待解决问题"></a>待解决问题</h3><p>DIAL Server目前只能在chrome中打开推送视频并控制，因为没有找到Native App支持的API，没有实现启动Native App（如YouTube、Netflix）。<br>YouTube APP现有api为<a href="https://developers.google.com/youtube/android/player/" target="_blank" rel="external">https://developers.google.com/youtube/android/player/</a> ，只处理三种格式的视频URL请求</p>
+<ul>
+<li><a href="http://www.youtube.com/watch?v=VIDEO_IDENTIFIER" target="_blank" rel="external">http://www.youtube.com/watch?v=VIDEO_IDENTIFIER</a></li>
+<li><a href="http://www.youtube.com/v/VIDEO_IDENTIFIER" target="_blank" rel="external">http://www.youtube.com/v/VIDEO_IDENTIFIER</a></li>
+<li>youtube://</li>
+</ul>
+<p>Netflix在2014年关闭了公有api <a href="https://gigaom.com/2014/11/14/netflix-is-shutting-down-its-public-api-today/" target="_blank" rel="external">https://gigaom.com/2014/11/14/netflix-is-shutting-down-its-public-api-today/</a> ，示例中代码为启动linux客户端传递命令行参数的形式。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/15/Hexo搭建github博客-NexT主题/" rel="next" title="Hexo搭建github博客-NexT主题">
+                <i class="fa fa-chevron-left"></i> Hexo搭建github博客-NexT主题
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/08/19/Android离线语音识别/" rel="prev" title="Android离线语音识别">
+                Android离线语音识别 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/07/21/DIAL在Android上的移植/"
+           data-title="DIAL Server在Android上的移植" data-url="https://xiangnan.github.io/2016/07/21/DIAL在Android上的移植/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/gxn.jpg"
+               alt="Yolo" />
+          <p class="site-author-name" itemprop="name">Yolo</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">15</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xiangnan" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/1998010247" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.douban.com/people/146521945/" target="_blank" title="DouBan">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  DouBan
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/gu-xiang-nan-3" target="_blank" title="ZhiHu">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  ZhiHu
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#无线显示标准"><span class="nav-number">1.</span> <span class="nav-text">无线显示标准</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UPnP"><span class="nav-number">2.</span> <span class="nav-text">UPnP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DIAL协议"><span class="nav-number">3.</span> <span class="nav-text">DIAL协议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DIAL-Server"><span class="nav-number">4.</span> <span class="nav-text">DIAL Server</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#源码说明"><span class="nav-number">4.1.</span> <span class="nav-text">源码说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#mongoose"><span class="nav-number">4.1.1.</span> <span class="nav-text">mongoose</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#quick-ssdp（对应DIAL-Service-Discovery）"><span class="nav-number">4.1.2.</span> <span class="nav-text">quick_ssdp（对应DIAL Service Discovery）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#dial-server（对应DIAL-REST-Service）"><span class="nav-number">4.1.3.</span> <span class="nav-text">dial_server（对应DIAL REST Service）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#源码修改说明"><span class="nav-number">4.2.</span> <span class="nav-text">源码修改说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#待解决问题"><span class="nav-number">4.3.</span> <span class="nav-text">待解决问题</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yolo</span>
+</div>
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"xiangnan"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+<script type="text/javascript" async src="//push.zhanzhang.baidu.com/push.js">
+</script>
+
+
+</body>
+</html>
