@@ -1,0 +1,831 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="惯性传感器包括加速度计和陀螺仪，若要获取三个姿态轴的角度，加速度计+磁力计可以获取绝对角度[不滤波的情况下噪声较大]，陀螺仪可以获取相对角度（即转过多少度）[存在漂移]，但惯性传感器都存在误差，因此要做姿态矫正。">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="姿态矫正-Android惯性传感器">
+<meta property="og:url" content="https://xiangnan.github.io/2018/02/09/姿态矫正-Android陀螺仪、加速度计、磁力计/index.html">
+<meta property="og:site_name" content="Yolo">
+<meta property="og:description" content="惯性传感器包括加速度计和陀螺仪，若要获取三个姿态轴的角度，加速度计+磁力计可以获取绝对角度[不滤波的情况下噪声较大]，陀螺仪可以获取相对角度（即转过多少度）[存在漂移]，但惯性传感器都存在误差，因此要做姿态矫正。">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006ZauMWgy1fo9jap4kxdj30ji0qpq6m.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006ZauMWgy1fo9janp7quj30qb0g2my6.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006ZauMWgy1fo9jannsl4j307c07w0t7.jpg">
+<meta property="og:image" content="http://img.blog.csdn.net/20151125211944990">
+<meta property="og:image" content="http://img.blog.csdn.net/20151125211917940">
+<meta property="og:image" content="http://img.blog.csdn.net/20151125211931073">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006ZauMWgy1fo9janik0gj309r07edft.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006ZauMWgy1fo9jaqp39oj30ic08rao5.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006ZauMWgy1fo9jao6ktxj30jf0a175z.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006ZauMWgy1fo9japx8k1j30vk0qpgpu.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006ZauMWgy1fo9jape9u6j30sg0qw0wx.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006ZauMWgy1fo9japfb9zj30sr0nkgp8.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006ZauMWgy1fo9jansm3kj30fz07z0tc.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006ZauMWgy1fo9jao1e5dj30ih0bu757.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006ZauMWgy1fo9jaotm2aj30az059q4i.jpg">
+<meta property="og:updated_time" content="2018-02-08T17:52:11.079Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="姿态矫正-Android惯性传感器">
+<meta name="twitter:description" content="惯性传感器包括加速度计和陀螺仪，若要获取三个姿态轴的角度，加速度计+磁力计可以获取绝对角度[不滤波的情况下噪声较大]，陀螺仪可以获取相对角度（即转过多少度）[存在漂移]，但惯性传感器都存在误差，因此要做姿态矫正。">
+<meta name="twitter:image" content="https://ws1.sinaimg.cn/large/006ZauMWgy1fo9jap4kxdj30ji0qpq6m.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: 'Author'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="https://xiangnan.github.io/2018/02/09/姿态矫正-Android陀螺仪、加速度计、磁力计/"/>
+
+  <title> 姿态矫正-Android惯性传感器 | Yolo </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-84862254-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?9ee03fcc737833d8cfeb282e7670f86b";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Yolo</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">You only live once.</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                姿态矫正-Android惯性传感器
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Posted on</span>
+            <time itemprop="dateCreated" datetime="2018-02-09T00:53:50+08:00" content="2018-02-09">
+              2018-02-09
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2018/02/09/姿态矫正-Android陀螺仪、加速度计、磁力计/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/02/09/姿态矫正-Android陀螺仪、加速度计、磁力计/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv"><i class="fa fa-file-o"></i>
+              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>惯性传感器包括加速度计和陀螺仪，若要获取三个姿态轴的角度，加速度计+磁力计<br>可以获取绝对角度[不滤波的情况下噪声较大]，陀螺仪可以获取相对角度（即转过多少度）[存在漂移]，但惯性传感器都存在误差，因此要做姿态矫正。</p>
+<a id="more"></a>
+<h3 id="什么是惯性传感器"><a href="#什么是惯性传感器" class="headerlink" title="什么是惯性传感器"></a>什么是惯性传感器</h3><p>惯性传感器是检测和测量加速度、倾斜、冲击、振动、旋转和多自由度(DOF)运动的传感器。惯性传感器，应用惯性原理和测量技术，感受载体运动的加速度、位置和姿态的各种敏感装置。</p>
+<h3 id="惯性传感器分类与构成"><a href="#惯性传感器分类与构成" class="headerlink" title="惯性传感器分类与构成"></a>惯性传感器分类与构成</h3><p>惯性传感器包括加速度计（或加速度传感计）和角速度传感器（陀螺）以及它们的单、双、三轴组合IMU（惯性测量单元），AHRS（包括磁传感器的姿态参考系统）。</p>
+<p>MEMS加速度计是利用传感质量的惯性力测量的传感器，通常由标准质量块（传感元件）和检测电路组成。IMU主要由三个MEMS加速度传感器及三个陀螺和解算电路组成。</p>
+<p>航姿参考系统（AHRS）与惯性测量单元IMU的区别在于，航姿参考系统（AHRS）包含了嵌入式的姿态数据解算单元与航向信息，惯性测量单元（IMU）仅仅提供传感器数据，并不具有提供准确可靠的姿态数据。目前常用的航姿参考系统（AHRS）内部采用的多传感器数据融合进行的航姿解算单元为卡尔曼滤波器。</p>
+<h3 id="惯性传感器应用"><a href="#惯性传感器应用" class="headerlink" title="惯性传感器应用"></a>惯性传感器应用</h3><p>低精度MEMS惯性传感器作为消费电子类产品主要用在手机、GPS导航、游戏机、数码相机、音乐播放器、无线鼠标、PD、硬盘保护器、智能玩具、计步器、防盗系统。由于具有加速度测量、倾斜测量、振动测量甚至转动测量等基本测量功能。</p>
+<p>中级MEMS惯性传感器作为工业级及汽车级产品，则主要用于汽车电子稳定系统（ESP或ESC）GPS辅助导航系统，汽车安全气囊、车辆姿态测量、精密农业、工业自动化、大型医疗设备、机器人、仪器仪表、工程机械等。</p>
+<p>高精度的MEMS惯性传感器作为军用级和宇航级产品，主要要求高精度、全温区、抗冲击等指数。主要用于通讯卫星无线、导弹导引头、光学瞄准系统等稳定性应用；飞机/导弹飞行控制、姿态控制、偏航阻尼等控制应用、以及中程导弹制导、惯性GP战场机器人等。</p>
+<p><a href="http://m.mydrivers.com/baidu/newsview.aspx?tid=479503" target="_blank" rel="external">手机常用传感器用途</a></p>
+<h3 id="Android惯性传感器"><a href="#Android惯性传感器" class="headerlink" title="Android惯性传感器"></a>Android惯性传感器</h3><p><img src="https://ws1.sinaimg.cn/large/006ZauMWgy1fo9jap4kxdj30ji0qpq6m.jpg" height="672" width="491" alt="Screenshot"></p>
+<p><img src="https://ws1.sinaimg.cn/large/006ZauMWgy1fo9janp7quj30qb0g2my6.jpg" height="292" width="491" alt="Screenshot"></p>
+<ul>
+<li><p>线性加速度计是排除了重力加速度的影响得到的值</p>
+</li>
+<li><p>重力感应器、方向感应器（电子罗盘）、旋转传感器（姿态传感器）是基于加速度计、陀螺仪、磁传感器（有的还有GPS）的数据获得的派生传感器。重力传感器是通过测量重力加速度方向来判断重力的方向，与旋转传感器区别是，旋转传感器用到了陀螺仪的数据，在动态情况（比如你在边走边看手机）也能很好的判断手机的姿态角。方向传感器则是主要通过磁传感器来测量地磁场来判断方向（类似指南针的作用），有时还需要配合GPS（各地的磁场不一样）。</p>
+</li>
+<li><p>陀螺仪和加速度计都是通过振动测量加速度的，只不过陀螺仪测量的是科氏加速度，而加速度计是测量的直接加速度。MEMS陀螺仪可以简单理解为一个谐振器+加速度计。因此陀螺仪的结构要比加速度计复杂得多，技术也难得多。</p>
+</li>
+</ul>
+<h3 id="坐标系"><a href="#坐标系" class="headerlink" title="坐标系"></a>坐标系</h3><p>飞行器姿态角，欧拉中的俯仰、横滚、偏航角</p>
+<p>Android手机的自然坐标系</p>
+<p><img src="https://ws1.sinaimg.cn/large/006ZauMWgy1fo9jannsl4j307c07w0t7.jpg" height="284" width="264" alt="Screenshot"></p>
+<p>手机坐标系是跟随设备的自然方向的，即当设备运动或者旋转的时候，这些坐标轴是不会改变的。</p>
+<p><img src="http://img.blog.csdn.net/20151125211944990" alt="这里写图片描述" title="" style="border:none; vertical-align:middle; outline:none; max-width:100%; max-height:100%"></p>
+<p>pitch是俯仰角，是“点头”，在Android陀螺仪传感器中绕x轴旋转</p>
+<p><img src="http://img.blog.csdn.net/20151125211917940" alt="这里写图片描述" title="" style="border:none; vertical-align:middle; outline:none; max-width:100%; max-height:100%"></p>
+<p>yaw是偏航角，是“摇头”，在Android陀螺仪传感器中绕y轴旋转</p>
+<p><img src="http://img.blog.csdn.net/20151125211931073" alt="这里写图片描述" title="" style="border:none; vertical-align:middle; outline:none; max-width:100%; max-height:100%"></p>
+<p>roll是旋转角，是“翻滚”，在Android陀螺仪传感器中绕z轴旋转</p>
+<p>用加速度和地磁传感器得到的角度，通过<a href="https://developer.android.com/reference/android/hardware/SensorManager.html#getOrientation(float[], float[]" target="_blank" rel="external">getOrientation()</a>)方法，得到的是z，x，y</p>
+<p>通过<a href="https://developer.android.com/reference/android/hardware/SensorManager.html#getRotationMatrix(float[], float[], float[], float[]" target="_blank" rel="external">getRotationMatrix()</a>)<br>方法，得到的是世界坐标系</p>
+<p><img src="https://ws1.sinaimg.cn/large/006ZauMWgy1fo9janik0gj309r07edft.jpg" height="266" width="351" alt="Screenshot"></p>
+<h3 id="惯性传感器误差"><a href="#惯性传感器误差" class="headerlink" title="惯性传感器误差"></a>惯性传感器误差</h3><p>陀螺仪，测量角速度，具有高动态特性，它是一个间接测量角度的器件。它测量的是角度的导数，即角速度，要将角速度对时间积分才能得到角度。</p>
+<p>加速度计的低频特性好，可以测量低速的静态加速度。加速度对振动和其他非重力加速度敏感。加速度计仅仅测量的是重力加速度，3轴加速度计输出重力加速度在加速度计所在机体坐标系3个轴上的分量大小。重力加速度的方向和大小是固定的。通过这种关系，可以得到加速度计所在平面与地面的角度关系。加速度计若是绕着重力加速度的轴转动，则测量值不会改变，也就是说加速度计无法感知水平旋转。</p>
+<p>因此6轴使用了加速度计和陀螺仪，也只可以用于测得飞机的俯仰和横滚角度。对于偏航角度，由于偏航角和重力方向正交，无法用加速度计测量得到。在这个维度上没有一个可靠的长期值来矫正陀螺仪的值。因此还需要采用其他设备来校准测量偏航角度的陀螺仪的漂移值。校准的设备可以使用磁罗盘计（电子磁罗盘，对磁场变化和惯性力敏感）或者GPS。GPS数据更新较慢（1Hz到10Hz），并且短时间内存在误差。所以用GPS只能长时间的在地面跟踪较为稳定和慢速的飞行器，如果需要矫正航向我们就只有使用电子罗盘了。</p>
+<h5 id="1、确定性误差"><a href="#1、确定性误差" class="headerlink" title="1、确定性误差"></a>1、确定性误差</h5><p>传感器非正交性（安装误差）：</p>
+<p>三轴加速度计和陀螺仪的三个轴不是完全的正交的，例如对于加速度计，理想情况下其中一个轴测量重力，其他两个轴不应该有输出。传感器不正交会出现在安装和封装的时候。生产和标定能够一定程度的解决这个问题，在系统运行的时候持续的估计和矫正也是一种解决方法。</p>
+<p>尺度误差（scale）</p>
+<h5 id="2、陀螺仪的误差分析"><a href="#2、陀螺仪的误差分析" class="headerlink" title="2、陀螺仪的误差分析"></a>2、陀螺仪的误差分析</h5><ul>
+<li>温漂</li>
+</ul>
+<p>解决方法：</p>
+<p>通过大电阻进行加热，使得传感器的工作温度在一恒定值。如DJI拆机图，IMU模块有个大电阻进行加热。</p>
+<p><img src="https://ws1.sinaimg.cn/large/006ZauMWgy1fo9jaqp39oj30ic08rao5.jpg" height="315" width="660" alt="Screenshot"></p>
+<p>另外一种就是事先进行温飘标定，即不同温度下，拟合出补偿的数据。不过，这种方法也较为麻烦，比如飞控量产，需要每一个都这么做；其次就是时间长了，标定会有偏差的，所以，能硬件解决的问题，千万不要让算法去做。</p>
+<ul>
+<li>零偏</li>
+</ul>
+<p>漂移指输出随着时间的变化，零漂是输入为0的时候的输出。</p>
+<p>重复性</p>
+<p>假设所有的条件一样，对于相同的输入，传感器输出相同的值的能力（对于每次启动都相同）。陀螺仪的零偏不具有重复性。</p>
+<ul>
+<li>随机噪声</li>
+</ul>
+<p>噪声分析allan variance模型</p>
+<p><img src="https://ws1.sinaimg.cn/large/006ZauMWgy1fo9jao6ktxj30jf0a175z.jpg" height="361" width="699" alt="Screenshot"></p>
+<p>a、量化噪声Q(t)(Quantization Noise)</p>
+<p>AD采样导致的噪声，量化噪声具有很宽的带宽，属于高频噪声，可以用低通滤波器处理或通过导航的积分环节去除，对精度的影响不大；</p>
+<p>b、角度随机游走(ARW(t))(Angular Random Walk)</p>
+<p>c、零偏不稳定性(F(t))(Bias Instability) ，也叫作闪变噪声（Flicker Noise）</p>
+<p>准确的来说，并不是只有零偏导致偏移，零偏是没有运动时平均输出。零偏不稳定性即零偏会随着时间缓慢的变化。这是由于内部电磁的善变噪声和外部影响导致的，而且每次启动之初的零偏是不相同的。</p>
+<p>d、速率斜坡(Rate Ramp)</p>
+<p>陀螺的角速率输出随着时间缓慢变化，通常由系统误差引起，比如环境温度的缓慢变化，可以通过严格的环境控制或引入补偿来降低此类误差。</p>
+<p>e、指数相关噪声(Exponential Correlation Noise)和正弦噪声S(t)（Sinusoidal Noise）</p>
+<p>正弦噪声：由于mems单元在特定频率工作，所以一般受到正弦噪声的污染。</p>
+<p>从算法上需要解决的：（1）角度随机游走(ARW)（2）零偏不稳定性</p>
+<h3 id="惯性传感器姿态校正"><a href="#惯性传感器姿态校正" class="headerlink" title="惯性传感器姿态校正"></a>惯性传感器姿态校正</h3><p>1、一种有效的长期漂移消除方法是对陀螺仪实施零角速度更新。只要知道器件处于完全静止状态，便可将相应轴的陀螺仪偏移归零。因具体应用不同，这样的机会有很大差异。但只要系统处于重复出现的安静状态，例如汽车怠速、自主机器人静止或人跨脚步之间的时间，就可以进行归零调整。</p>
+<p>2、传感器融合<br>因为加速度/磁力计具有高频噪声（需要低通滤波），它的瞬时值不够精确，解算出来的姿态会震荡，但长期来看姿态方向是对的。而陀螺仪具有低频噪声（需要高通滤波），即每个时刻的得到的角速度是比较精确的，使用积分就能得到旋转角度（姿态），但是积分会累积误差。可以融合这三种传感器的数据，提高精度和系统的动态特性。 </p>
+<h4 id="1、FSensor方案"><a href="#1、FSensor方案" class="headerlink" title="1、FSensor方案"></a>1、<a href="https://github.com/KalebKE/FSensor" target="_blank" rel="external">FSensor方案</a></h4><p>a、Averaging Filters</p>
+<p>用来去除随机噪声，但漂移没有去除</p>
+<ul>
+<li>Low-Pass Filter 低通过滤器</li>
+<li>Mean Filter 均值过滤器</li>
+<li>Median Filter 中值过滤器</li>
+</ul>
+<p>b、Sensor Fusions</p>
+<ul>
+<li>Quaternions Complimentary Filter(四元数互补滤波)</li>
+</ul>
+<p>（测试手机魅蓝数据）正常状态绕圈运动角度变化值</p>
+<p><img src="https://ws1.sinaimg.cn/large/006ZauMWgy1fo9japx8k1j30vk0qpgpu.jpg" height="672" width="795" alt="Screenshot"></p>
+<p>到（-180/180）边界值异常变化，所以放弃了该算法</p>
+<p><img src="https://ws1.sinaimg.cn/large/006ZauMWgy1fo9jape9u6j30sg0qw0wx.jpg" height="672" width="795" alt="Screenshot"><br><img src="https://ws1.sinaimg.cn/large/006ZauMWgy1fo9japfb9zj30sr0nkgp8.jpg" height="672" width="795" alt="Screenshot"></p>
+<ul>
+<li>Quaternion Kalman Filter(四元数卡尔曼滤波)</li>
+</ul>
+<p>c、Linear Acceleration</p>
+<ul>
+<li>Android Linear Acceleration<br>短时间表现较好<br><img src="https://ws1.sinaimg.cn/large/006ZauMWgy1fo9jansm3kj30fz07z0tc.jpg" height="287" width="575" alt="Screenshot"></li>
+<li>Low-Pass Linear Acceleration</li>
+<li>IMU Sensor Fusion Linear Acceleration</li>
+</ul>
+<h4 id="2、Oculus融合算法方案"><a href="#2、Oculus融合算法方案" class="headerlink" title="2、Oculus融合算法方案"></a>2、Oculus融合算法方案</h4><p><a href="https://developer.oculus.com/blog/sensor-fusion-keeping-it-simple/" target="_blank" rel="external">Oculus sensor fusion:Keeping It Simple 传感器融合算法</a></p>
+<p>类似互补融合，它的代码实现在openHMD中ofusion_update接口中<br>注：openHMD中的oculus融合算法（已更新于2016.12.01），不包含航向偏移校正。</p>
+<h4 id="3、MIT互补滤波算法方案"><a href="#3、MIT互补滤波算法方案" class="headerlink" title="3、MIT互补滤波算法方案"></a>3、MIT互补滤波算法方案</h4><p><a href="https://www.codeproject.com/articles/729759/android-sensor-fusion-tutorial" target="_blank" rel="external">Android Sensor Fusion Tutorial</a></p>
+<p>MIT上发表的互补滤波算法的原理和基于Android平台的算法实现。实验LG有些手机的数据是不准确的（后来发现是磁力计未做矫正导致，需要手动矫正…姿势有点蠢），魅蓝是都准确的。</p>
+<p><img src="https://ws1.sinaimg.cn/large/006ZauMWgy1fo9jao1e5dj30ih0bu757.jpg" height="426" width="665" alt="Screenshot"></p>
+<p>Angle = (a)<em>(Angle + Gyro </em> dt) + (1-a)*(x_acc)</p>
+<p>时间常数t=(a*dt)/(1-a) , 得到a=t/(t+dt)。dt为取样周期，t为时间常数自己设定，一般小于1。比如取样周期为100HZ，也就是0.01s,那么dt=0.01。时间常数设为0.5（对于不同的系统都不一样，自己试验），那么a=0.5/(0.5+0.01)=0.9804。</p>
+<p>那么Angle = (0.9804)<em>(Angle + Gyro </em> dt)（高通部分） + (0.0196)*(Acc)（低通部分）</p>
+<p>互补滤波不能有效纠正陀螺仪零漂，而卡尔曼可以有效纠正陀螺仪零漂问题。<br>在温度环境稳定的情况下，例如平衡车一般都是在同一个地域，地面温度环境不会剧变，传感器零漂不大，所以在应用互补滤波和卡尔曼差别不明显。而在飞行器领域，正所谓高处不胜寒，随着高度上升温度也会变化，传感器也会变得不稳定，所以这时候使用卡尔曼滤波才会体现出比互补滤波的优越之处。</p>
+<p><img src="https://ws1.sinaimg.cn/large/006ZauMWgy1fo9jaotm2aj30az059q4i.jpg" height="189" width="395" alt="Screenshot"></p>
+<p>卡尔曼滤波利用前一次的状态值，预测当前状态</p>
+<h4 id="4、AHRS方案"><a href="#4、AHRS方案" class="headerlink" title="4、AHRS方案"></a>4、AHRS方案</h4><p>在四轴飞行器论坛上，比较多人使用<a href="https://github.com/TobiasSimon/MadgwickTests/blob/master/MadgwickAHRS.c" target="_blank" rel="external">AHRS开源融合算法</a> </p>
+<h3 id="六轴九轴传感器的应用"><a href="#六轴九轴传感器的应用" class="headerlink" title="六轴九轴传感器的应用"></a>六轴九轴传感器的应用</h3><p>六轴传感器：应美盛ICM-20608、MPU-6555、MPU-6500、MPU-6000、MPU-6050、ST6轴传感器模块LSM330DL、飞兆6轴惯性检测单元（IMU）FIS1100</p>
+<p>HTC Vive VR和Oculus Rift VR上采用了MPU-6500</p>
+<p>九轴传感器：应美盛（InvenSense）MPU-9255、MPU-9250（六轴加速度计/陀螺仪+三轴磁力计）、MPU-9150、博世（Bosch Sensortec）BMX160、BMX055、意法半导体（ST）LSM9DS0（三轴陀螺仪+三轴加速度计+三轴地磁计）、</p>
+<p>参考</p>
+<p>[1] <a href="http://www.baike.com/wiki/%E6%83%AF%E6%80%A7%E4%BC%A0%E6%84%9F%E5%99%A8" target="_blank" rel="external">惯性传感器</a></p>
+<p>[2] <a href="https://www.zhihu.com/question/20798838" target="_blank" rel="external">知乎</a></p>
+<p>[3] <a href="https://zhuanlan.zhihu.com/p/24280315" target="_blank" rel="external">陀螺仪的数据处理</a></p>
+<p>[4] <a href="http://blog.csdn.net/haoliliang88/article/details/76744816" target="_blank" rel="external">imu误差的效果</a></p>
+<p>[5] <a href="https://github.com/KalebKE/FSensor" target="_blank" rel="external">FSensor</a></p>
+<p>[6] <a href="http://blog.csdn.net/guyubit/article/details/52995676" target="_blank" rel="external">欧拉中的俯仰、横滚、偏航角</a></p>
+<p>[7] <a href="http://blog.csdn.net/dabenxiong666/article/details/53836503" target="_blank" rel="external">VR中的9轴传感器（重力加速度/陀螺仪/磁力计）</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag">#Android</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/02/09/静态代码对比/" rel="next" title="静态代码检测工具对比">
+                <i class="fa fa-chevron-left"></i> 静态代码检测工具对比
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/gxn.jpg"
+               alt="Yolo" />
+          <p class="site-author-name" itemprop="name">Yolo</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">17</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">tags</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xiangnan" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/1998010247" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.douban.com/people/146521945/" target="_blank" title="DouBan">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  DouBan
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/gu-xiang-nan-3" target="_blank" title="ZhiHu">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  ZhiHu
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是惯性传感器"><span class="nav-number">1.</span> <span class="nav-text">什么是惯性传感器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#惯性传感器分类与构成"><span class="nav-number">2.</span> <span class="nav-text">惯性传感器分类与构成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#惯性传感器应用"><span class="nav-number">3.</span> <span class="nav-text">惯性传感器应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Android惯性传感器"><span class="nav-number">4.</span> <span class="nav-text">Android惯性传感器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#坐标系"><span class="nav-number">5.</span> <span class="nav-text">坐标系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#惯性传感器误差"><span class="nav-number">6.</span> <span class="nav-text">惯性传感器误差</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1、确定性误差"><span class="nav-number">6.0.1.</span> <span class="nav-text">1、确定性误差</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2、陀螺仪的误差分析"><span class="nav-number">6.0.2.</span> <span class="nav-text">2、陀螺仪的误差分析</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#惯性传感器姿态校正"><span class="nav-number">7.</span> <span class="nav-text">惯性传感器姿态校正</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1、FSensor方案"><span class="nav-number">7.1.</span> <span class="nav-text">1、FSensor方案</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2、Oculus融合算法方案"><span class="nav-number">7.2.</span> <span class="nav-text">2、Oculus融合算法方案</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3、MIT互补滤波算法方案"><span class="nav-number">7.3.</span> <span class="nav-text">3、MIT互补滤波算法方案</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4、AHRS方案"><span class="nav-number">7.4.</span> <span class="nav-text">4、AHRS方案</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#六轴九轴传感器的应用"><span class="nav-number">8.</span> <span class="nav-text">六轴九轴传感器的应用</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yolo</span>
+</div>
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'https-xiangnan-github-io';
+      var disqus_identifier = '2018/02/09/姿态矫正-Android陀螺仪、加速度计、磁力计/';
+      var disqus_title = "姿态矫正-Android惯性传感器";
+      var disqus_url = 'https://xiangnan.github.io/2018/02/09/姿态矫正-Android陀螺仪、加速度计、磁力计/';
+
+      function run_disqus_script(disqus_script){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+      
+        run_disqus_script('embed.js');
+      
+    </script>
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+<script type="text/javascript" async src="//push.zhanzhang.baidu.com/push.js">
+</script>
+
+
+</body>
+</html>
