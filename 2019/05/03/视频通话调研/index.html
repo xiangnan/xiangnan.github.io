@@ -1,0 +1,911 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android, Yolo, xiangnan" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="WebRTC Android编译及音视频相关记录。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="视频通话调研">
+<meta property="og:url" content="https://xiangnan.github.io/2019/05/03/视频通话调研/index.html">
+<meta property="og:site_name" content="Yolo">
+<meta property="og:description" content="WebRTC Android编译及音视频相关记录。">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/006ZauMWgy1g2pnf35a97j30g205wab4.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/006ZauMWgy1g2png4p8j4j30fh05dwfs.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/006ZauMWgy1g2pngovuqtj30ew0aztdw.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/006ZauMWgy1g2pnozv4v0j30g202hgmp.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/006ZauMWgy1g2pnhs0ozmj30f505rgnv.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/006ZauMWgy1g2pnhg16kij30eb0a5786.jpg">
+<meta property="og:updated_time" content="2019-05-04T15:44:04.739Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="视频通话调研">
+<meta name="twitter:description" content="WebRTC Android编译及音视频相关记录。">
+<meta name="twitter:image" content="http://ww1.sinaimg.cn/large/006ZauMWgy1g2pnf35a97j30g205wab4.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: 'Author'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="https://xiangnan.github.io/2019/05/03/视频通话调研/"/>
+
+  <title> 视频通话调研 | Yolo </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-84862254-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?9ee03fcc737833d8cfeb282e7670f86b";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Yolo</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">You only live once.</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                视频通话调研
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Posted on</span>
+            <time itemprop="dateCreated" datetime="2019-05-03T22:12:12+08:00" content="2019-05-03">
+              2019-05-03
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2019/05/03/视频通话调研/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/05/03/视频通话调研/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv"><i class="fa fa-file-o"></i>
+              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>WebRTC Android编译及音视频相关记录。</p>
+<a id="more"></a>
+<h4 id="WebRTC-Android编译"><a href="#WebRTC-Android编译" class="headerlink" title="WebRTC Android编译"></a>WebRTC Android编译</h4><p><a href="https://webrtc.org/native-code/android/" target="_blank" rel="external">参照官网</a></p>
+<p>1、硬件要求</p>
+<p>Linux (with Android): 16 GB (of which ~8 GB is Android SDK+NDK images)</p>
+<p>Mac (with iOS support): 5.6GB，Mac系统不支持编译Android，脚本中有lsb_release</p>
+<p>2、Webrtc的源码使用了chromium内核的代码管理工具：depot_tools，下载depot_tools</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">git <span class="built_in">clone</span> https://chromium.googlesource.com/chromium/tools/depot_tools.git</div><div class="line">``` </div><div class="line"></div><div class="line">3、设置depot_tools环境变量</div><div class="line"></div><div class="line">添加<span class="built_in">export</span> PATH=“<span class="variable">$PATH</span>:/home/webrtc/depot_tools”</div><div class="line"></div><div class="line">4、下载源码</div><div class="line"></div><div class="line">``` bash</div><div class="line">mkdir webrtc &amp;&amp; <span class="built_in">cd</span> webrtc</div><div class="line">// 若有报错，检查环境配置是否正确</div><div class="line">fetch --nohooks webrtc_android</div><div class="line">// 若有 You have unstaged changes.Please commit, stash, or reset.错误，加 --force</div><div class="line">gclient sync</div></pre></td></tr></table></figure>
+<p>5、编译源码</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">cd</span> src</div><div class="line">// SDK NDK环境配置到PATH中</div><div class="line">. build/android/envsetup.sh</div><div class="line">// 这里不加，编译会有问题</div><div class="line">./build/install-build-deps.sh</div><div class="line">./build/install-build-deps-android.sh</div><div class="line">// 编译生成Debug版</div><div class="line">gn gen out/Debug --args=<span class="string">'target_os="android" target_cpu="arm"'</span></div><div class="line">ninja -C out/Debug</div><div class="line"></div><div class="line">// 生成release版ninja项目文件</div><div class="line">gn gen out/Release --args=<span class="string">'target_os="android" target_cpu="arm" is_debug=false'</span></div><div class="line">ninja -C out/Release</div></pre></td></tr></table></figure>
+<p>成功后可以在out/Debug下找到编译好的apk demo文件及so，jar包</p>
+<p>6、apk demo运行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">adb install -r out/Default/apks/AppRTCMobile.apk</div><div class="line">// 在chrome浏览器中输入：https://appr.tc 并输入房间号点击JOIN创建一个房间。打开装好的AppRTC，并输入相同的房间号，可进行WebRTC通话</div><div class="line"></div><div class="line">//WebRTCDemo只是局域网内的点对点，知道对方的ip和端口号就可以对打,不需要服务器，AppRTCDemo是需要服务器的，可以局域网，或者广域网</div></pre></td></tr></table></figure>
+<p>7、使用Android Studio开发</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">ninja -C out/Debug AppRTCMobile</div><div class="line"></div><div class="line">build/android/gradle/generate_gradle.py --output-directory <span class="variable">$PWD</span>/out/Debug</div><div class="line">--target <span class="string">"//examples:AppRTCMobile"</span> --use-gradle-process-resources</div><div class="line">--split-projects --canary</div><div class="line"></div><div class="line">// 会在out/Debug/gradle里生成android项目，Android studio import后，可以按照每个module里build文件里源码路径把源码手动添加进来</div></pre></td></tr></table></figure>
+<h4 id="低延时"><a href="#低延时" class="headerlink" title="低延时"></a>低延时</h4><p>延时的产生：</p>
+<p><img src="http://ww1.sinaimg.cn/large/006ZauMWgy1g2pnf35a97j30g205wab4.jpg" alt=""></p>
+<p><img src="http://ww1.sinaimg.cn/large/006ZauMWgy1g2png4p8j4j30fh05dwfs.jpg" alt=""></p>
+<ul>
+<li>T1：设备端上的延时</li>
+</ul>
+<p>音视频数据在设备端上产生延时还可以细分。设备端上的延时主要与硬件性能、采用的编解码算法、音视频数据量相关，设备端上的延时可达到 30~200ms，甚至更高。如上表所示，音频与视频分别在采集端或播放端产生延时的过程基本相同，但产生延时的原因不同。</p>
+<p>1、音频在设备端上的延时：</p>
+<p>音频采集延时：采集后的音频首先会经过声卡进行信号转换，声卡本身会产生延时，比如 M-Audio 声卡设备延迟 1ms，艾肯声卡设备延迟约为 37ms；</p>
+<p>编解码延时：随后音频进入前处理、编码的阶段，如果采用 OPUS 标准编码，最低算法延时大约需要 2.5~60ms；</p>
+<p>音频播放延时：这部分延时与播放端硬件性能相关。</p>
+<p>音频处理延时：前后处理，包括 AEC，ANS，AGC 等前后处理算法都会带来算法延时，通常这里的延时就是滤波器阶数。在 10ms 以内。</p>
+<p>端网络延时：这部分延时主要出现在解码之前的 jitter buffer 内，如果在抗丢包处理中，增加了重传算法和前向纠错算法，这里的延时一般在 20ms 到 200ms 左右。但是受到 jitter buffer 影响，可能会更高。</p>
+<p>2、视频在设备端上的延时：</p>
+<p>采集延时：采集时会遇到成像延迟，主要由 CCD 相关硬件产生，市面上较好的 CCD 一秒可达 50 帧，成像延时约为 20ms，如果是一秒 20~25 帧的 CCD，会产生 40~50ms 的延时；</p>
+<p>编解码延时：以 H.264 为例，它包含 I、P、B 三种帧（下文会详细分析），如果是每秒 30 帧相连帧，且不包括 B 帧（由于 B 帧的解码依赖前后视频帧会增加延迟），采集的一帧数据可能直接进入编码器，没有 B 帧时，编码的帧延时可以忽略不计，但如果有 B 帧，会带来算法延时。</p>
+<p>视频渲染延时：一般情况下渲染延时非常小，但是它也会受到系统性能、音画同步的影响而增大。</p>
+<p>端网络延时：与音频一样，视频也会遇到端网络延时。</p>
+<p>另外，在设备端，CPU、缓存通常会同时处理来自多个应用、外接设备的请求，如果某个问题设备的请求占用了 CPU，会导致音视频的处理请求出现延时。以音频为例，当出现该状况时，CPU 可能无法及时填充音频缓冲区，音频会出现卡顿。所以设备整体的性能，也会影响音视频采集、编解码与播放的延时。</p>
+<p>T2：端与服务器间的延时</p>
+<p>影响采集端与服务器、服务器与播放端的延时的有以下主几个因素：客户端同服务间的物理距离、客户端和服务器的网络运营商、终端网络的网速、负载和网络类型等。如果服务器就近部署在服务区域、服务器与客户端的网络运营商一致时，影响上下行网络延时的主要因素就是终端网络的负载和网络类型。一般来说，无线网络环境下的传输延时波动较大，传输延时通常在 10~100ms 不定。而有线宽带网络下，同城的传输延时能较稳定的低至 5ms~10ms。但是在国内有很多中小运营商，以及一些交叉的网络环境、跨国传输，那么延时会更高。</p>
+<p>T3：服务器间的延时<br>在此我们要要考虑两种情况，第一种，两端都连接着同一个边缘节点，那么作为最优路径，数据直接通过边缘节点进行转发至播放端；第二种，采集端与播放端并不在同一个边缘节点覆盖范围内，那么数据会经由“靠近”采集端的边缘节点传输至主干网络，然后再发送至“靠近”播放端的边缘节点，但这时服务器之间的传输、排队还会产生延时。仅以骨干网络来讲，数据传输从黑龙江到广州大约需要 30ms，从上海到洛杉矶大约需要 110ms~130ms。</p>
+<p>在实际情况下，我们为了解决网络不佳、网络抖动，会在采集设备端、服务器、播放端增设缓冲策略。一旦触发缓冲策略就会产生延时。如果卡顿情况多，延时会慢慢积累。要解决卡顿、积累延时，就需要优化整个网络状况。</p>
+<p>综上所述，由于音视频在采集与播放端上的延时取决于硬件性能、编解码内核的优化，不同设备，表现不同。所以通常市面上常见的“端到端延时”指的是 T2+T3。</p>
+<ul>
+<li>丢包</li>
+</ul>
+<p>没按时到的包为丢包。一个包应该在某个时间点到，但它晚到了，即使来了但是晚了，也叫丢包。因为播放的这段时间已经过去了，即使放了，体验也不好。从整个网络上看，丢包一定有时限，否则，都通过反复重传方法，一定能送达一个包。</p>
+<h4 id="音频采样率、码率、延时-影响实时音频通讯质量的因素"><a href="#音频采样率、码率、延时-影响实时音频通讯质量的因素" class="headerlink" title="音频采样率、码率、延时(影响实时音频通讯质量的因素)"></a>音频采样率、码率、延时(影响实时音频通讯质量的因素)</h4><p>音频信息其实就是一段以时间为横轴的正弦波，它是一段连续的信号。</p>
+<ul>
+<li><p>采样率：是每秒从连续信号中提取并组成离散信号的采样个数。采样率越高，音频听起来越接近真实声音。</p>
+</li>
+<li><p>码率：它描述了单位时间长度的媒体内容需要空间。码率越高，意味着每个采样的信息量就越大，对这个采样的描述就越精确，音质越好。</p>
+</li>
+</ul>
+<h4 id="码率、帧率、分辨率、延时-影响实时视频质量的因素"><a href="#码率、帧率、分辨率、延时-影响实时视频质量的因素" class="headerlink" title="码率、帧率、分辨率、延时(影响实时视频质量的因素)"></a>码率、帧率、分辨率、延时(影响实时视频质量的因素)</h4><ul>
+<li>帧</li>
+</ul>
+<p>在视频压缩的过程中，I 帧是帧内图像数据压缩，是独立帧，视频序列中的第一个帧始终都是 I 帧。 </p>
+<p>在视频会议系统中，并不是每次都把完整的一幅幅图片发送到远端，而只是发送后一幅画面在前一幅画面基础上发生变化的部分。如果在网络状况不好的情况下，终端的接收远端或者发送给远程的画面就会有丢包而出现图像花屏、图像卡顿的现象。</p>
+<p>在视频画面播放过程中，若I帧丢失了，则后面的P帧也就随着解不出来，就会出现视频画面黑屏的现象；若P帧丢失了，则视频画面会出现花屏、马赛克等现象。</p>
+<p>在视频压缩的过程中，I帧是帧内图像数据压缩，是独立帧。而P帧则是参考I帧进行帧间图像数据压缩，不是独立帧。在压缩后的视频中绝大多数都是P帧，故视频质量主要由P帧表现出来。由于P帧不是独立帧，而只是保存了与邻近的I帧的差值，故实际上并不存在分辨率的概念，应该看成一个二进制差值序列。而该二进制序列在使用熵编码压缩技术时会使用量化参数进行有损压缩，视频的质量直接由量化参数决定，而量化参数会直接影响到压缩比和码率。</p>
+<p> <img src="http://ww1.sinaimg.cn/large/006ZauMWgy1g2pngovuqtj30ew0aztdw.jpg" width="80%" height="50%" alt="图片名称" align="center"></p>
+<p>上图所示为 H.264 标准下的视频帧。它以 I 帧、P 帧、B 帧组成的 GOP 分组来表示图像画面（如下图）：I 帧是关键帧，带有图像全部信息；P 帧是预测编码帧，表示与当前与前一帧（I 或 P 帧）之间的差别；B 帧是双向预测编码帧，记录本帧与前后帧的差别。</p>
+<ul>
+<li>显卡帧率（FPS）：每秒显示的图片数。影响画面流畅度。帧率越大，画面越流畅；帧率越小，画面越有跳动感。</li>
+</ul>
+<p>由于人类眼睛的特殊生理结构，如果所看画面帧率高于24fps的时候，就会认为是连贯的，此现象称之为视觉暂留。高的帧率可以得到更流畅、更逼真的动画。一般来说30fps就是可以接受的，提升至60fps则可以明显提升交互感和逼真感，但是一般来说超过75fps一般就不容易察觉到有明显的流畅度提升了。</p>
+<p>另一个区分的概念是显示器刷新率，人眼可以直接感知的画面是来自显示器，因此所谓的画面是否流畅，是从显示器观察而来。显卡的帧率是否能让我们感知到（换句话说就是画面是否流畅）是受到显示器的刷新率的制约的。现在的显卡通常120FPS，显示器通常60HZ刷新率。</p>
+<p>FPS与分辨率、显卡处理能力的关系：<br>处理能力=分辨率×刷新率<br>这也就是为什么在玩游戏时，分辨率设置得越大，画面就越不流畅的原因</p>
+<ul>
+<li>分辨率：就是帧大小每一帧就是一副图像。</li>
+</ul>
+<p>720P和1080P代表视频流的分辨率，前者1280*720，后者1920*1080</p>
+<p>清晰是指画面细腻，没有马赛克，并不是分辨率越高图像就越清晰。</p>
+<p>在码率一定的情况下，分辨率与清晰度成反比关系：分辨率越高，图像越不清晰；分辨率越低，图像越清晰。在分辨率一定的情况下，码率与清晰度成正比关系，码率越高，图像越清晰；码率越低，图像越不清晰。</p>
+<p>分辨率的变化又称为重新采样。由高分辨率变成低分辨率称为下采样，由于采样前数据充足，只需要尽量保留更多的信息量，一般可以获得相对较好的结果。而由低分辨率变成高分辨率称为上采样，由于需要插值等方法来补充（猜测）缺少的像素点，故必然会带有失真，这就是一种视频质量（清晰度）的损失。</p>
+<ul>
+<li>码率：数据传输时单位时间传送的数据位数,一般我们用的单位是kbps即千位每秒（kb/s或Mb/s）。</li>
+</ul>
+<p>通俗一点的理解就是取样率或者比特率。一般来说同样分辨率下，视频文件的码流（码率）越大，压缩比就越小，画面质量就越高。码流越大，说明单位时间内取样率越大，数据流，精度就越高，处理出来的文件就越接近原始文件，图像质量越好，画质越清晰，要求播放设备的解码能力也越高。但是文件体积与取样率是成正比的，所以几乎所有的编码格式重视的都是如何用最低的码率达到最少的失真。视频的码率与音频码率相似，码率越大，画面细节信息越丰富，视频文件体积越大。</p>
+<p>通常来说，一个视频文件包括了画面及声音，例如一个RMVB的视频文件，里面包含了视频信息和音频信息，音频及视频都有各自不同的采样方式和比特率，也就是说，同一个视频文件音频和视频的比特率并不是一样的。而我们所说的一个视频文件码流率大小，一般是指视频文件中音频及视频信息码流率的总和。</p>
+<p>用mediainfo查看</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>长度</td>
+<td>3分 47秒</td>
+</tr>
+<tr>
+<td>码率</td>
+<td>1411.2 Kbps</td>
+</tr>
+<tr>
+<td>声道</td>
+<td>2声道</td>
+</tr>
+<tr>
+<td>采样率</td>
+<td>44.1 KHz</td>
+</tr>
+<tr>
+<td>位深度</td>
+<td>16位</td>
+</tr>
+<tr>
+<td>大小</td>
+<td>38.3 MiB (100%)</td>
+</tr>
+</tbody>
+</table>
+<p>1、码率计算公式：</p>
+<p>码率=采样率 x 位深度 x 声道</p>
+<p>文件的码率= 44.1Khz x 16位 x 2声道 = 1411.2 Kbps</p>
+<p>2、文件大小 = 码率 x 时长 = 1411.2 Kbps x (3 x 60 + 47 )s = 1411.2Kbps x 227s</p>
+<p> =38102.4 Kb</p>
+<p>38102.4 Kb / 1024 Kb/M = 37.2M</p>
+<p>（音频编码率（KBit为单位）/8 +视频编码率（KBit为单位）/8）×影片总长度（秒为单位）= 文件大小（MB为单位）</p>
+<h4 id="直播特效的实现原理"><a href="#直播特效的实现原理" class="headerlink" title="直播特效的实现原理"></a>直播特效的实现原理</h4><p>直播的具体流程，包括：采集、前处理、编码、传输、解码、后处理、播放。</p>
+<p><img src="http://ww1.sinaimg.cn/large/006ZauMWgy1g2pnozv4v0j30g202hgmp.jpg" alt=""></p>
+<ul>
+<li>采集</li>
+</ul>
+<p>视频的采集源主要有三种：摄像头采集、屏幕录制和从视频文件推流。直播中常见的是通过摄像头采集的图像。以Android为例，由于需要进行图像的二次处理（滤镜、特效），所以使用 SurfaceTexture来处理图像流，给采集到的图像增添特效、滤镜等。SurfaceTexture 是一个纹理，可以想象成一个 View 的中间件。Camera 把视频采集的内容交给 SurfaceTexture，SurfaceTexture 进行美颜处理，然后把内容交给 SurfaceView，渲染出来。</p>
+<ul>
+<li>前处理</li>
+</ul>
+<p>对采集到的图像进行处理：比如通过均值模糊、高斯模糊和中值滤波等去噪算法，给原始视频进行“磨皮”；增加滤镜；为视频添加实时的 AR 特效；回声消除、噪声抑制等。</p>
+<ul>
+<li>编码</li>
+</ul>
+<p>在完成图像的处理后，按照合适码率、格式进行编码。主流的视频编码器分为3个系列：VPx（VP8，VP9），H.26x（H.264，H.265），AVS（AVS1.0，AVS2.0）。VPx系列是由Google开源的视频编解码标准。在保证相同质量情况下，VP9相比VP8码率减少约50%。H.26x系列在硬件支持上比较广泛，H.265的编码效率能比上一代提高了30-50%，但是复杂度和功耗会比上一代大很多，所以纯软件编码实现的话有一定瓶颈，现有的技术下，还是需要依靠硬件编解码为主。AVS是我国具备自主知识产权的第二代信源编码标准，目前已经发展到第二代。</p>
+<p>封装格式（专业上讲叫容器，通俗的叫文件格式）</p>
+<p>1、MPEG : 编码采用的容器，具有流的特性。里面又分为 PS，TS 等，PS 主要用于 DVD 存储，TS 主要用于 HDTV.</p>
+<p>2、MPEG Audio Layer 3 :大名鼎鼎的 MP3，已经成为网络音频的主流格式，能在 128kbps 的码率接近 CD 音质</p>
+<p>3、MPEG-4(Mp4) : 编码采用的容器，基于 QuickTime MOV 开发，具有许多先进特性;实际上是对Apple公司开发的MOV格式(也称Quicktime格式)的一种改进。</p>
+<p>4、MKV: 它能把 Windows Media Video，RealVideo，MPEG-4 等视频音频融为一个文件，而且支持多音轨，支持章节字幕等;开源的容器格式。</p>
+<p>5、3GP : 3GPP视频采用的格式， 主要用于流媒体传送;3GP其实是MP4格式的一种简化版本,是手机视频格式的绝对主流。</p>
+<p>6、MOV : QuickTime 的容器，恐怕也是现今最强大的容器，甚至支持虚拟现实技术，Java等，它的变种 MP4,3GP都没有这么厉害;广泛应用于Mac OS操作系统，在Windows操作系统上也可兼容，但是远比不上AVI格式流行</p>
+<p>7、AVI : 最常见的音频视频容器,音频视频交错（Audio Video Interleaved）允许视频和音频交错在一起同步播放。</p>
+<p>8、WAV : 一种音频容器，大家常说的 WAV 就是没有压缩的 PCM 编码，其实 WAV 里面还可以包括 MP3 等其他 ACM 压缩编码。</p>
+<p>最后，推流到 CDN。</p>
+<h4 id="流媒体"><a href="#流媒体" class="headerlink" title="流媒体"></a>流媒体</h4><p>边下载边播的流式传输方式</p>
+<p>1、RTP RTCP RTSP</p>
+<p>RTP ：（Real-time Transport Protocol）是用于Internet上针对多媒体数据流的一种传输层协议。RTP协议和RTP控制协议RTCP一起使用，而且它是建立在UDP协议上的。</p>
+<p>RTCP：Real-time Transport Control Protocol或RTP Control Protocol或简写RTCP，实时传输控制协议，是实时传输协议（RTP）的一个姐妹协议。RTP协议和RTP控制协议RTCP一起使用，而且它是建立在UDP协议上的。</p>
+<p>RTSP：（Real Time Streaming Protocol）是用来控制声音或影像的多媒体串流协议，RTSP提供了一个可扩展框架，使实时数据，如音频与视频的受控、点播成为可能。</p>
+<p>RTP不像http和ftp可完整的下载整个影视文件，它是以固定的数据率在网络上发送数据，客户端也是按照这种速度观看影视文件，当影视画面播放过后，就不可以再重复播放，除非重新向服务器端要求数据。</p>
+<p>RTSP与RTP最大的区别在于：RTSP是一种双向实时数据传输协议，它允许客户端向服务器端发送请求，如回放、快进、倒退等操作。当然，RTSP可基于RTP来传送数据，还可以选择TCP、UDP、组播UDP等通道来发送数据，具有很好的扩展性。它时一种类似与http协议的网络应用层协议</p>
+<p>2、RTMP</p>
+<p>RTMP（Real Time Messaging Protocol（实时消息传送协议是Adobe Systems公司为Flash播放器和服务器之间音频、视频和数据传输开发的开放协议。</p>
+<p>3、HLS</p>
+<p>HTTP Live Streaming（HLS）是苹果公司实现的基于HTTP的流媒体传输协议，可实现流媒体的直播和点播，主要应用在iOS系统，为iOS设备（如iPhone、iPad）提供音视频直播和点播方案。HLS点播，基本上就是常见的分段HTTP点播，不同在于，它的分段非常小。相对于常见的流媒体直播协议，例如RTMP协议、RTSP协议、MMS协议等，HLS直播最大的不同在于，直播客户端获取到的，并不是一个完整的数据流。HLS协议在服务器端将直播数据流存储为连续的、很短时长的媒体文件（MPEG-TS格式），而客户端则不断的下载并播放这些小文件。因为服务器端总是会将最新的直播数据生成新的小文件，这样客户端只要不停的按顺序播放从服务器获取到的文件，就实现了直播。</p>
+<h4 id="MediaCodec"><a href="#MediaCodec" class="headerlink" title="MediaCodec"></a>MediaCodec</h4><p><img src="http://ww1.sinaimg.cn/large/006ZauMWgy1g2pnhs0ozmj30f505rgnv.jpg" alt=""></p>
+<ul>
+<li>MediaCodec编码器包含两个缓冲区，一个输入缓冲区，一个输出缓冲区。</li>
+<li>客户端先从 MediaCodec 获取一个可用的输入缓冲区，然后将待编码的数据填充到缓冲区，然后交给 MediaCodec 去处理。</li>
+<li>客户端从输出缓冲区获取已经处理好的数据，客户端得到数据后并处理后，释放空间，最后将缓冲区还给 MediaCodec。</li>
+</ul>
+<p><img src="http://ww1.sinaimg.cn/large/006ZauMWgy1g2pnhg16kij30eb0a5786.jpg" alt=""></p>
+<ul>
+<li>要用 MediaCodec，首先需要创建，根据我们想要的编码格式创建。创建后就是Uninitialized 状态</li>
+<li>创建完成之后还不能直接用，我们需要进行配置，进入 Configured。这时候就准备就绪了</li>
+<li>Configured 后，就可以 start。进行运行阶段了。</li>
+<li>运行阶段又分3个子状态。start() 后就进入 Flushed 状态。</li>
+<li>当客户端获取一个有效的输入缓冲区后，就进入了 Running，而MediaCodec 大部分时间在这个状态。</li>
+<li>如果客户端将得到的输入缓冲区入队时带有末尾标记时，编码器就进入 End of Stream 状态，这时候就不再接受后面缓冲区的输入。</li>
+<li>stop 之后就会重新进入 Uninitialized 状态。</li>
+<li>如果出现错误就会进入 Error 状态。</li>
+</ul>
+<h4 id="MediaCodec编码"><a href="#MediaCodec编码" class="headerlink" title="MediaCodec编码"></a>MediaCodec编码</h4><p>使用MediaCodec流程</p>
+<p>1、创建MediaCodec</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">initMediaCodec</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">int</span> bitrate = <span class="number">2</span> * WIDTH * HEIGHT * FRAME_RATE / <span class="number">20</span>;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">    	 <span class="comment">// 获取系统的编码器并查找是否有需要的编码器并返回其信息</span></div><div class="line">        MediaCodecInfo mediaCodecInfo = selectCodec(VCODEC_MIME);</div><div class="line">        <span class="keyword">if</span> (mediaCodecInfo == <span class="keyword">null</span>) &#123;</div><div class="line">            Toast.makeText(<span class="keyword">this</span>, <span class="string">"mMediaCodec null"</span>, Toast.LENGTH_LONG).show();</div><div class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"mediaCodecInfo is Empty"</span>);</div><div class="line">        &#125;</div><div class="line">        LogUtils.w(<span class="string">"MediaCodecInfo "</span> + mediaCodecInfo.getName());</div><div class="line">        <span class="comment">// 得到信息后创建 MediaCodec</span></div><div class="line">        mMediaCodec = MediaCodec.createByCodecName(mediaCodecInfo.getName());</div><div class="line">        <span class="comment">// 配置编码信息</span></div><div class="line">        <span class="comment">// 码率KEY_BIT_RATE、编码像素格式KEY_COLOR_FORMAT、帧率KEY_FRAME_RATE、像素格式KEY_COLOR_FORMAT（不同的设备可能支持的格式不同）</span></div><div class="line">        MediaFormat mediaFormat = MediaFormat.createVideoFormat(VCODEC_MIME, WIDTH, HEIGHT);</div><div class="line">        mediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, bitrate);</div><div class="line">        mediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, FRAME_RATE);</div><div class="line">        mediaFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT,</div><div class="line">                MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Planar);</div><div class="line">        mediaFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, <span class="number">1</span>);</div><div class="line">        <span class="comment">// 编码信息配置给编码器</span></div><div class="line">        mMediaCodec.configure(mediaFormat, <span class="keyword">null</span>, <span class="keyword">null</span>, MediaCodec.CONFIGURE_FLAG_ENCODE);</div><div class="line">        mMediaCodec.start();</div><div class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line">        e.printStackTrace();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>2、编码</p>
+<p>从Camera.PreviewCallback的onPreviewFrame(final byte[] data, Camera camera)回调方法中获取数据。data就是采集到的原始YUV数据，这里把第几帧和编码时间以及采集时间打印出来，这里的YUV数据和Camera的参数设置有关params.setPreviewFormat(ImageFormat.YV12)，系统默认使用的N21。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StreamIt</span> <span class="keyword">implements</span> <span class="title">Camera</span>.<span class="title">PreviewCallback</span> </span>&#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onPreviewFrame</span><span class="params">(<span class="keyword">final</span> <span class="keyword">byte</span>[] data, Camera camera)</span> </span>&#123;</div><div class="line">        <span class="keyword">long</span> endTime = System.currentTimeMillis();</div><div class="line">        executor.execute(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">                encodeTime = System.currentTimeMillis();</div><div class="line">                flvPackage(data);</div><div class="line">                LogUtils.w(<span class="string">"编码第:"</span> + (encodeCount++) + <span class="string">"帧，耗时:"</span> + (System.currentTimeMillis() - encodeTime));</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">        LogUtils.d(<span class="string">"采集第:"</span> + (++count) + <span class="string">"帧，距上一帧间隔时间:"</span></div><div class="line">                + (endTime - previewTime) + <span class="string">"  "</span> + Thread.currentThread().getName());</div><div class="line">        previewTime = endTime;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">flvPackage</span><span class="params">(<span class="keyword">byte</span>[] buf)</span> </span>&#123;</div><div class="line">        <span class="keyword">final</span> <span class="keyword">int</span> LENGTH = HEIGHT * WIDTH;</div><div class="line">        <span class="comment">//YV12数据转化成COLOR_FormatYUV420Planar，因为编码器支持的输入是COLOR_FormatYUV420Planar，而采集到的是YV12。两者的区别就是 U、V 分量颠倒了个位置。</span></div><div class="line">        LogUtils.d(LENGTH + <span class="string">"  "</span> + (buf.length - LENGTH));</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = LENGTH; i &lt; (LENGTH + LENGTH / <span class="number">4</span>); i++) &#123;</div><div class="line">            <span class="keyword">byte</span> temp = buf[i];</div><div class="line">            buf[i] = buf[i + LENGTH / <span class="number">4</span>];</div><div class="line">            buf[i + LENGTH / <span class="number">4</span>] = temp;</div><div class="line"><span class="comment">//            char x = 128;</span></div><div class="line"><span class="comment">//            buf[i] = (byte) x;</span></div><div class="line">        &#125;</div><div class="line">        <span class="comment">//MediaCodec 进行 H.264编码</span></div><div class="line">        <span class="comment">//获取编码器的输入和输出缓冲区</span></div><div class="line">        ByteBuffer[] inputBuffers = mMediaCodec.getInputBuffers();</div><div class="line">        ByteBuffer[] outputBuffers = mMediaCodec.getOutputBuffers();</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            <span class="comment">//获取一个可用的输入缓冲区索引，用来填充有效数据</span></div><div class="line">            <span class="keyword">int</span> bufferIndex = mMediaCodec.dequeueInputBuffer(-<span class="number">1</span>);</div><div class="line">            <span class="comment">//如果返回&gt;0说明有效。然后获取到对应的ByteBuffer</span></div><div class="line">            <span class="keyword">if</span> (bufferIndex &gt;= <span class="number">0</span>) &#123;</div><div class="line">                <span class="comment">//将图像数据填充到inputBuffer中</span></div><div class="line">                ByteBuffer inputBuffer = inputBuffers[bufferIndex];</div><div class="line">                inputBuffer.clear();</div><div class="line">                inputBuffer.put(buf, <span class="number">0</span>, buf.length);</div><div class="line">                <span class="comment">//把数据传给编码器并进行编码</span></div><div class="line">                mMediaCodec.queueInputBuffer(bufferIndex, <span class="number">0</span>,</div><div class="line">                        inputBuffers[bufferIndex].position(),</div><div class="line">                        System.nanoTime() / <span class="number">1000</span>, <span class="number">0</span>);</div><div class="line">                MediaCodec.BufferInfo bufferInfo = <span class="keyword">new</span> MediaCodec.BufferInfo();</div><div class="line">                <span class="comment">//获取编码后的数据，先得到输出缓冲区索引，返回成功的buffer索引。</span></div><div class="line">                <span class="keyword">int</span> outputBufferIndex = mMediaCodec.dequeueOutputBuffer(bufferInfo, <span class="number">0</span>);</div><div class="line">                <span class="keyword">while</span> (outputBufferIndex &gt;= <span class="number">0</span>) &#123;</div><div class="line">                    ByteBuffer outputBuffer = outputBuffers[outputBufferIndex];</div><div class="line">                    <span class="comment">//得到对应的 ByteBuffer，也就是编码后的数据，进行flv封装</span></div><div class="line">                    mFlvPacker.onVideoData(outputBuffer, bufferInfo);</div><div class="line">                    mMediaCodec.releaseOutputBuffer(outputBufferIndex, <span class="keyword">false</span>);</div><div class="line">                    outputBufferIndex = mMediaCodec.dequeueOutputBuffer(bufferInfo, <span class="number">0</span>);</div><div class="line">                &#125;</div><div class="line">            &#125; <span class="keyword">else</span> &#123;</div><div class="line">                LogUtils.w(<span class="string">"No buffer available !"</span>);</div><div class="line">            &#125;</div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>3、flv封装</p>
+<p>将原始的 H.264 数据封装成 flv 格式的数据</p>
+<ul>
+<li>flv 文件封装视频数据前先写入 flv 头，metadata 数据</li>
+<li>MediaCodec 进行编码后的第一个数据是 sps、pps数据，也是 flv 中的第一个 video tag</li>
+<li>后面收到的 MediaCodec 编码后的数据就是正常的视频 H.264 数据，封装到 flv 中</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onVideoData</span><span class="params">(ByteBuffer bb, MediaCodec.BufferInfo bi)</span> </span>&#123;</div><div class="line">    mAnnexbHelper.analyseVideoData(bb, bi);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * 将硬编得到的视频数据进行处理生成每一帧视频数据，然后传给flv打包器</div><div class="line"> * <span class="doctag">@param</span> bb 硬编后的数据buffer</div><div class="line"> * <span class="doctag">@param</span> bi 硬编的BufferInfo</div><div class="line"> */</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">analyseVideoData</span><span class="params">(ByteBuffer bb, MediaCodec.BufferInfo bi)</span> </span>&#123;</div><div class="line">    bb.position(bi.offset);</div><div class="line">    bb.limit(bi.offset + bi.size);</div><div class="line">    ArrayList&lt;<span class="keyword">byte</span>[]&gt; frames = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">    <span class="keyword">boolean</span> isKeyFrame = <span class="keyword">false</span>;</div><div class="line">    <span class="keyword">while</span>(bb.position() &lt; bi.offset + bi.size) &#123;</div><div class="line">        <span class="keyword">byte</span>[] frame = annexbDemux(bb, bi);</div><div class="line">        <span class="keyword">if</span>(frame == <span class="keyword">null</span>) &#123;</div><div class="line">            LogUtils.e(<span class="string">"annexb not match."</span>);</div><div class="line">            <span class="keyword">break</span>;</div><div class="line">        &#125;</div><div class="line">        <span class="comment">// ignore the nalu type aud(9)</span></div><div class="line">        <span class="keyword">if</span> (isAccessUnitDelimiter(frame)) &#123;</div><div class="line">            <span class="keyword">continue</span>;</div><div class="line">        &#125;</div><div class="line">        <span class="comment">// for pps</span></div><div class="line">        <span class="keyword">if</span>(isPps(frame)) &#123;</div><div class="line">            mPps = frame;</div><div class="line">            <span class="keyword">continue</span>;</div><div class="line">        &#125;</div><div class="line">        <span class="comment">// for sps</span></div><div class="line">        <span class="keyword">if</span>(isSps(frame)) &#123;</div><div class="line">            mSps = frame;</div><div class="line">            <span class="keyword">continue</span>;</div><div class="line">        &#125;</div><div class="line">        <span class="comment">// for IDR frame</span></div><div class="line">        <span class="keyword">if</span>(isKeyFrame(frame)) &#123;</div><div class="line">            isKeyFrame = <span class="keyword">true</span>;</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            isKeyFrame = <span class="keyword">false</span>;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">byte</span>[] naluHeader = buildNaluHeader(frame.length);</div><div class="line">        frames.add(naluHeader);</div><div class="line">        frames.add(frame);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span> (mPps != <span class="keyword">null</span> &amp;&amp; mSps != <span class="keyword">null</span> &amp;&amp; mListener != <span class="keyword">null</span> &amp;&amp; mUploadPpsSps) &#123;</div><div class="line">        <span class="keyword">if</span>(mListener != <span class="keyword">null</span>) &#123;</div><div class="line">            mListener.onSpsPps(mSps, mPps);</div><div class="line">        &#125;</div><div class="line">        mUploadPpsSps = <span class="keyword">false</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span>(frames.size() == <span class="number">0</span> || mListener == <span class="keyword">null</span>) &#123;</div><div class="line">        <span class="keyword">return</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">int</span> size = <span class="number">0</span>;</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; frames.size(); i++) &#123;</div><div class="line">        <span class="keyword">byte</span>[] frame = frames.get(i);</div><div class="line">        size += frame.length;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">byte</span>[] data = <span class="keyword">new</span> <span class="keyword">byte</span>[size];</div><div class="line">    <span class="keyword">int</span> currentSize = <span class="number">0</span>;</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; frames.size(); i++) &#123;</div><div class="line">        <span class="keyword">byte</span>[] frame = frames.get(i);</div><div class="line">        System.arraycopy(frame, <span class="number">0</span>, data, currentSize, frame.length);</div><div class="line">        currentSize += frame.length;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span>(mListener != <span class="keyword">null</span>) &#123;</div><div class="line">        mListener.onVideo(data, isKeyFrame);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p>[1] <a href="https://blog.csdn.net/u010839382/article/details/52754437" target="_blank" rel="external">帧率、显示器刷新率与垂直同步</a></p>
+<p>[2] <a href="http://www.10tiao.com/html/610/201605/2657207105/1.html" target="_blank" rel="external">谈码率、帧率、分辨率和清晰度的关系</a></p>
+<p>[3] <a href="https://blog.csdn.net/youmingyu/article/details/53192714" target="_blank" rel="external">WebRTC 的 Android 2 Android 实现</a></p>
+<p>[4] <a href="https://rtcdeveloper.com/" target="_blank" rel="external">声网论坛</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/02/09/姿态矫正-Android陀螺仪、加速度计、磁力计/" rel="next" title="姿态矫正-Android惯性传感器">
+                <i class="fa fa-chevron-left"></i> 姿态矫正-Android惯性传感器
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/05/03/git及repo常用命令-to-be-continue/" rel="prev" title="git及repo常用命令（to be continue）">
+                git及repo常用命令（to be continue） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/gxn.jpg"
+               alt="Yolo" />
+          <p class="site-author-name" itemprop="name">Yolo</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">19</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">tags</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xiangnan" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/1998010247" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.douban.com/people/146521945/" target="_blank" title="DouBan">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  DouBan
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/gu-xiang-nan-3" target="_blank" title="ZhiHu">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  ZhiHu
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#WebRTC-Android编译"><span class="nav-number">1.</span> <span class="nav-text">WebRTC Android编译</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#低延时"><span class="nav-number">2.</span> <span class="nav-text">低延时</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#音频采样率、码率、延时-影响实时音频通讯质量的因素"><span class="nav-number">3.</span> <span class="nav-text">音频采样率、码率、延时(影响实时音频通讯质量的因素)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#码率、帧率、分辨率、延时-影响实时视频质量的因素"><span class="nav-number">4.</span> <span class="nav-text">码率、帧率、分辨率、延时(影响实时视频质量的因素)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#直播特效的实现原理"><span class="nav-number">5.</span> <span class="nav-text">直播特效的实现原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#流媒体"><span class="nav-number">6.</span> <span class="nav-text">流媒体</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MediaCodec"><span class="nav-number">7.</span> <span class="nav-text">MediaCodec</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MediaCodec编码"><span class="nav-number">8.</span> <span class="nav-text">MediaCodec编码</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number"></span> <span class="nav-text">参考</span></a></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yolo</span>
+</div>
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'https-xiangnan-github-io';
+      var disqus_identifier = '2019/05/03/视频通话调研/';
+      var disqus_title = "视频通话调研";
+      var disqus_url = 'https://xiangnan.github.io/2019/05/03/视频通话调研/';
+
+      function run_disqus_script(disqus_script){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+      
+        run_disqus_script('embed.js');
+      
+    </script>
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+<script type="text/javascript" async src="//push.zhanzhang.baidu.com/push.js">
+</script>
+
+
+</body>
+</html>
